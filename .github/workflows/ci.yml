@@ -110,7 +110,6 @@ jobs:
     needs: [test, lint, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
-      id-token: write
       contents: read
     steps:
     - uses: actions/checkout@v4
@@ -135,4 +134,5 @@ jobs:
       run: |
         uv publish dist/*
       env:
+        UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         UV_PUBLISH_NO_ATTESTATIONS: true
