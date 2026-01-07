@@ -1,71 +1,71 @@
 # API Reference
 
-## Fonctions principales
+## Main Functions
 
 ### `add(a, b, **kwargs)`
 
-Fonction principale d'addition sécurisée.
+Main safe addition function.
 
-**Paramètres :**
-- `a` : Premier opérande (nombre, séquence, ou type spécial)
-- `b` : Second opérande (nombre, séquence, ou type spécial)
-- `mode` : Mode de calcul (`"strict"`, `"fast"`, `"paranoid"`)
-- `precision` : Mode de précision (`"auto"`, `"float64"`, `"decimal"`, `"fraction"`, `"interval"`)
-- `overflow` : Politique d'overflow (`"raise"`, `"inf"`, `"saturate"`, `"wrap"`)
-- `nan` : Politique NaN (`"raise"`, `"propagate"`, `"replace"`)
-- `vectorize` : Activer la vectorisation (défaut: `True`)
-- `units` : Supporter les unités Pint (défaut: `True`)
-- `trace` : Activer le tracing (défaut: `True`)
-- `kahan` : Utiliser Kahan pour les sommes (défaut: `True`)
+**Parameters:**
+- `a` : First operand (number, sequence, or special type)
+- `b` : Second operand (number, sequence, or special type)
+- `mode` : Computation mode (`"strict"`, `"fast"`, `"paranoid"`)
+- `precision` : Precision mode (`"auto"`, `"float64"`, `"decimal"`, `"fraction"`, `"interval"`)
+- `overflow` : Overflow policy (`"raise"`, `"inf"`, `"saturate"`, `"wrap"`)
+- `nan` : NaN policy (`"raise"`, `"propagate"`, `"replace"`)
+- `vectorize` : Enable vectorization (default: `True`)
+- `units` : Support Pint units (default: `True`)
+- `trace` : Enable tracing (default: `True`)
+- `kahan` : Use Kahan for sums (default: `True`)
 
-**Retourne :**
-- Résultat de l'addition (type dépend des opérandes)
+**Returns:**
+- Addition result (type depends on operands)
 
-**Exemples :**
+**Examples:**
 ```python
 add(2, 3)  # 5
 add(0.1, 0.2, precision="decimal")  # Decimal('0.3')
 add([1, 2, 3], [4, 5, 6])  # [5, 7, 9]
 ```
 
-**Raises :**
-- `TypeError` : Si les types ne sont pas numériques
-- `OverflowError` : Si overflow et `overflow="raise"`
-- `ArithmeticError` : Si NaN et `nan="raise"`
+**Raises:**
+- `TypeError` : If types are not numeric
+- `OverflowError` : If overflow and `overflow="raise"`
+- `ArithmeticError` : If NaN and `nan="raise"`
 
 ---
 
 ### `sum_safe(values, precision="kahan", **kwargs)`
 
-Somme sécurisée de plusieurs valeurs avec compensation d'erreur.
+Safe sum of multiple values with error compensation.
 
-**Paramètres :**
-- `values` : Séquence de valeurs à sommer
-- `precision` : Algorithme (`"kahan"`, `"pairwise"`, `"neumaier"`, `"auto"`)
+**Parameters:**
+- `values` : Sequence of values to sum
+- `precision` : Algorithm (`"kahan"`, `"pairwise"`, `"neumaier"`, `"auto"`)
 
-**Retourne :**
-- Somme avec précision maximale
+**Returns:**
+- Sum with maximum precision
 
-**Exemples :**
+**Examples:**
 ```python
 values = [0.1] * 100
-sum_safe(values, precision="kahan")  # 10.0 (précis)
+sum_safe(values, precision="kahan")  # 10.0 (precise)
 ```
 
 ---
 
 ### `gradient(f, x)`
 
-Calcule le gradient d'une fonction par différentiation automatique.
+Computes the gradient of a function using automatic differentiation.
 
-**Paramètres :**
-- `f` : Fonction à différencier (callable)
-- `x` : Point où calculer le gradient
+**Parameters:**
+- `f` : Function to differentiate (callable)
+- `x` : Point where to compute the gradient
 
-**Retourne :**
-- Valeur du gradient `f'(x)`
+**Returns:**
+- Gradient value `f'(x)`
 
-**Exemples :**
+**Examples:**
 ```python
 def f(x):
     return x * x * x
@@ -77,46 +77,46 @@ gradient(f, 2.0)  # 12.0 (= 3×2²)
 
 ### `add_with_error(a, b)`
 
-Addition retournant aussi les bornes d'erreur.
+Addition also returning error bounds.
 
-**Paramètres :**
-- `a` : Premier opérande (float)
-- `b` : Second opérande (float)
+**Parameters:**
+- `a` : First operand (float)
+- `b` : Second operand (float)
 
-**Retourne :**
-- Tuple `(résultat, intervalle)` contenant la vraie valeur
+**Returns:**
+- Tuple `(result, interval)` containing the true value
 
-**Exemples :**
+**Examples:**
 ```python
 result, bounds = add_with_error(0.1, 0.2)
 # result = 0.30000000000000004
-# bounds = Interval garantissant que 0.3 est dedans
+# bounds = Interval guaranteeing that 0.3 is inside
 ```
 
 ---
 
-## Classes principales
+## Main Classes
 
 ### `NuclearConfig`
 
-Configuration complète du moteur d'addition.
+Complete addition engine configuration.
 
-**Méthodes de classe :**
-- `strict()` : Mode strict IEEE 754
-- `fast()` : Mode rapide, moins de vérifications
-- `paranoid()` : Mode paranoïaque, toutes vérifications
-- `scientific(precision=100)` : Mode scientifique haute précision
+**Class Methods:**
+- `strict()` : Strict IEEE 754 mode
+- `fast()` : Fast mode, fewer checks
+- `paranoid()` : Paranoid mode, all checks
+- `scientific(precision=100)` : High precision scientific mode
 
-**Attributs principaux :**
-- `math_mode` : Mode de calcul (`MathMode`)
-- `precision_mode` : Mode de précision (`PrecisionMode`)
-- `overflow_policy` : Politique d'overflow (`OverflowPolicy`)
-- `nan_policy` : Politique NaN (`NaNPolicy`)
-- `decimal_precision` : Précision décimale (int)
-- `enable_tracing` : Activer le tracing (bool)
-- `vectorize` : Activer la vectorisation (bool)
+**Main Attributes:**
+- `math_mode` : Computation mode (`MathMode`)
+- `precision_mode` : Precision mode (`PrecisionMode`)
+- `overflow_policy` : Overflow policy (`OverflowPolicy`)
+- `nan_policy` : NaN policy (`NaNPolicy`)
+- `decimal_precision` : Decimal precision (int)
+- `enable_tracing` : Enable tracing (bool)
+- `vectorize` : Enable vectorization (bool)
 
-**Exemples :**
+**Examples:**
 ```python
 config = NuclearConfig.strict()
 config = NuclearConfig.paranoid()
@@ -127,21 +127,21 @@ config = NuclearConfig.scientific(precision=200)
 
 ### `NuclearEngine`
 
-Moteur d'exécution pour le calcul numérique.
+Execution engine for numerical computation.
 
-**Méthodes :**
-- `add(a, b)` : Addition principale
-- `add_many(values, use_kahan=None)` : Somme de plusieurs valeurs
-- `add_interval(a, b, ulp_error=1)` : Addition avec intervalles
-- `add_autodiff(a, b, grad_a=True)` : Addition avec autodiff
-- `add_symbolic(a, b)` : Addition symbolique (SymPy)
+**Methods:**
+- `add(a, b)` : Main addition
+- `add_many(values, use_kahan=None)` : Sum of multiple values
+- `add_interval(a, b, ulp_error=1)` : Addition with intervals
+- `add_autodiff(a, b, grad_a=True)` : Addition with autodiff
+- `add_symbolic(a, b)` : Symbolic addition (SymPy)
 
-**Propriétés :**
-- `backend` : Backend actuel (lazy-loaded)
-- `tracer` : Traceur actuel
+**Properties:**
+- `backend` : Current backend (lazy-loaded)
+- `tracer` : Current tracer
 - `config` : Configuration
 
-**Exemples :**
+**Examples:**
 ```python
 engine = NuclearEngine(NuclearConfig.paranoid())
 result = engine.add(2, 3)
@@ -149,29 +149,29 @@ result = engine.add(2, 3)
 
 ---
 
-## Types avancés
+## Advanced Types
 
 ### `Interval`
 
-Arithmétique d'intervalles pour propagation d'incertitude.
+Interval arithmetic for uncertainty propagation.
 
-**Méthodes de classe :**
-- `from_value(value, ulp_error=1)` : Créer depuis une valeur
-- `exact(value)` : Créer un intervalle exact
+**Class Methods:**
+- `from_value(value, ulp_error=1)` : Create from a value
+- `exact(value)` : Create an exact interval
 
-**Propriétés :**
-- `low`, `high` : Bornes de l'intervalle
-- `midpoint` : Point central
-- `width` : Largeur totale
-- `radius` : Rayon (demi-largeur)
-- `relative_error` : Erreur relative
+**Properties:**
+- `low`, `high` : Interval bounds
+- `midpoint` : Center point
+- `width` : Total width
+- `radius` : Radius (half-width)
+- `relative_error` : Relative error
 
-**Méthodes :**
-- `overlaps(other)` : Vérifie le chevauchement
-- `contains_interval(other)` : Vérifie l'inclusion
-- `sqrt()` : Racine carrée
+**Methods:**
+- `overlaps(other)` : Check overlap
+- `contains_interval(other)` : Check inclusion
+- `sqrt()` : Square root
 
-**Exemples :**
+**Examples:**
 ```python
 a = Interval.from_value(0.1)
 b = Interval.from_value(0.2)
@@ -183,20 +183,20 @@ print(0.3 in c)  # True
 
 ### `DualNumber`
 
-Nombre dual pour différentiation automatique.
+Dual number for automatic differentiation.
 
-**Méthodes de classe :**
-- `variable(value)` : Créer une variable (dual=1)
-- `constant(value)` : Créer une constante (dual=0)
+**Class Methods:**
+- `variable(value)` : Create a variable (dual=1)
+- `constant(value)` : Create a constant (dual=0)
 
-**Propriétés :**
-- `real` : Valeur réelle
-- `dual` : Dérivée
+**Properties:**
+- `real` : Real value
+- `dual` : Derivative
 
-**Méthodes :**
-- `exp()`, `log()`, `sin()`, `cos()`, `sqrt()` : Fonctions mathématiques
+**Methods:**
+- `exp()`, `log()`, `sin()`, `cos()`, `sqrt()` : Mathematical functions
 
-**Exemples :**
+**Examples:**
 ```python
 x = DualNumber.variable(3.0)
 y = x * x  # f(x) = x²
@@ -208,18 +208,18 @@ print(y.dual)  # 6.0 (= 2x)
 
 ### `LazyExpr`
 
-Expression paresseuse pour graphes de calcul.
+Lazy expression for computation graphs.
 
-**Méthodes de classe :**
-- `var(name, value)` : Créer une variable
-- `const(value)` : Créer une constante
+**Class Methods:**
+- `var(name, value)` : Create a variable
+- `const(value)` : Create a constant
 
-**Méthodes :**
-- `eval()` : Évaluer l'expression
-- `grad(var_name)` : Calculer le gradient symbolique
-- `to_graph()` : Générer le graphe DOT
+**Methods:**
+- `eval()` : Evaluate the expression
+- `grad(var_name)` : Compute symbolic gradient
+- `to_graph()` : Generate DOT graph
 
-**Exemples :**
+**Examples:**
 ```python
 x = LazyExpr.var("x", 3.0)
 y = LazyExpr.var("y", 4.0)
@@ -232,12 +232,12 @@ print(z.grad("x").eval())  # 0.6
 
 ### `TracedValue`
 
-Valeur avec historique complet des opérations.
+Value with complete operation history.
 
-**Méthodes :**
-- `get_full_trace()` : Obtenir le trace complet formaté
+**Methods:**
+- `get_full_trace()` : Get formatted full trace
 
-**Exemples :**
+**Examples:**
 ```python
 a = TracedValue(10.0)
 b = TracedValue(5.0)
@@ -251,35 +251,35 @@ print(c.get_full_trace())
 
 ### `get_backend(name="auto", **kwargs)`
 
-Obtient un backend par nom.
+Gets a backend by name.
 
-**Paramètres :**
-- `name` : Nom du backend (`"python"`, `"numpy"`, `"cupy"`, `"numba"`, `"decimal"`, `"auto"`)
-- `**kwargs` : Arguments pour le constructeur (ex: `precision=100` pour Decimal)
+**Parameters:**
+- `name` : Backend name (`"python"`, `"numpy"`, `"cupy"`, `"numba"`, `"decimal"`, `"auto"`)
+- `**kwargs` : Constructor arguments (e.g., `precision=100` for Decimal)
 
-**Retourne :**
-- Instance du backend
+**Returns:**
+- Backend instance
 
-**Exemples :**
+**Examples:**
 ```python
 backend = get_backend("python")
 backend = get_backend("decimal", precision=100)
-backend = get_backend("auto")  # Sélection automatique
+backend = get_backend("auto")  # Automatic selection
 ```
 
 ---
 
 ### `list_available_backends()`
 
-Liste les backends disponibles sur le système.
+Lists available backends on the system.
 
-**Retourne :**
-- Liste des noms de backends disponibles
+**Returns:**
+- List of available backend names
 
-**Exemples :**
+**Examples:**
 ```python
 backends = list_available_backends()
-# ['python', 'numpy'] si NumPy est installé
+# ['python', 'numpy'] if NumPy is installed
 ```
 
 ---
@@ -288,24 +288,24 @@ backends = list_available_backends()
 
 ### `NumericTracer`
 
-Traceur d'erreurs numériques.
+Numerical error tracer.
 
-**Méthodes :**
-- `log(event)` : Enregistrer un événement
-- `log_error(...)` : Raccourci pour créer et logger
-- `clear()` : Effacer tous les événements
-- `get_by_type(error_type)` : Filtrer par type
-- `get_by_severity(min_severity)` : Filtrer par sévérité
-- `get_summary()` : Obtenir un résumé
-- `to_json()` : Exporter en JSON
+**Methods:**
+- `log(event)` : Log an event
+- `log_error(...)` : Shortcut to create and log
+- `clear()` : Clear all events
+- `get_by_type(error_type)` : Filter by type
+- `get_by_severity(min_severity)` : Filter by severity
+- `get_summary()` : Get summary
+- `to_json()` : Export to JSON
 
-**Propriétés :**
-- `events` : Liste des événements enregistrés
+**Properties:**
+- `events` : List of logged events
 
-**Exemples :**
+**Examples:**
 ```python
 tracer = NumericTracer()
-# ... opérations ...
+# ... operations ...
 summary = tracer.get_summary()
 print(summary["total_events"])
 ```
@@ -314,11 +314,10 @@ print(summary["total_events"])
 
 ### `get_global_tracer()` / `set_global_tracer(tracer)`
 
-Gérer le traceur global.
+Manage the global tracer.
 
-**Exemples :**
+**Examples:**
 ```python
 tracer = get_global_tracer()
 tracer.log_error(...)
 ```
-

@@ -371,15 +371,14 @@ nuclear_add/
 │   ├── api_reference.md      # Complete API reference
 │   ├── methods_guide.md      # Practical usage guide
 │   ├── design_decisions.md   # Design decisions
-│   └── diagrams.md           # Visual diagrams
+│   ├── diagrams.md           # Visual diagrams
+│   └── contributing.md       # Contributing guide
 ├── .github/
 │   └── workflows/
 │       └── ci.yml            # CI/CD configuration
 ├── pyproject.toml            # Project configuration
 ├── README.md                 # This file
-├── INSTALL.md                # Installation guide
-├── USAGE.md                  # Usage guide
-└── example_usage.py          # Usage example
+└── CHANGELOG.md              # Changelog
 ```
 
 ---

@@ -1,8 +1,8 @@
-# Architecture de Nuclear Add
+# Nuclear Add Architecture
 
-## Vue d'ensemble
+## Overview
 
-Nuclear Add est conçu avec une architecture modulaire permettant une extensibilité et une maintenabilité maximales.
+Nuclear Add is designed with a modular architecture enabling maximum extensibility and maintainability.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -38,38 +38,38 @@ Nuclear Add est conçu avec une architecture modulaire permettant une extensibil
 └──────────────┘  └──────────────┘
 ```
 
-## Modules principaux
+## Main Modules
 
 ### 1. Core (`core.py`)
 
-**Responsabilités :**
-- Configuration du moteur (`NuclearConfig`)
-- Exécution des calculs (`NuclearEngine`)
-- Fonction principale `add()`
-- Gestion des politiques d'erreur
-- Promotion des types
+**Responsibilities:**
+- Engine configuration (`NuclearConfig`)
+- Computation execution (`NuclearEngine`)
+- Main `add()` function
+- Error policy management
+- Type promotion
 
-**Classes principales :**
-- `NuclearConfig` : Configuration complète du moteur
-- `NuclearEngine` : Moteur d'exécution
-- `TypePromotionRules` : Règles de conversion de types
-- `OverflowPolicy`, `NaNPolicy`, `PrecisionMode`, `MathMode` : Enums de configuration
+**Main Classes:**
+- `NuclearConfig` : Complete engine configuration
+- `NuclearEngine` : Execution engine
+- `TypePromotionRules` : Type conversion rules
+- `OverflowPolicy`, `NaNPolicy`, `PrecisionMode`, `MathMode` : Configuration enums
 
 ### 2. Backends (`backends.py`)
 
-**Responsabilités :**
-- Abstraction des différents backends de calcul
-- Sélection automatique du meilleur backend
-- Optimisations spécifiques (SIMD, GPU, JIT)
+**Responsibilities:**
+- Abstraction of different computation backends
+- Automatic selection of the best backend
+- Specific optimizations (SIMD, GPU, JIT)
 
-**Backends disponibles :**
-- `PythonBackend` : Python pur (portable, référence)
-- `NumPyBackend` : NumPy avec optimisations SIMD
-- `CuPyBackend` : Calcul GPU CUDA (optionnel)
-- `NumbaBackend` : Compilation JIT (optionnel)
-- `DecimalBackend` : Précision arbitraire
+**Available Backends:**
+- `PythonBackend` : Pure Python (portable, reference)
+- `NumPyBackend` : NumPy with SIMD optimizations
+- `CuPyBackend` : CUDA GPU computation (optional)
+- `NumbaBackend` : JIT compilation (optional)
+- `DecimalBackend` : Arbitrary precision
 
-**Pattern :**
+**Pattern:**
 ```python
 Backend (ABC)
     ├── PythonBackend
@@ -81,46 +81,46 @@ Backend (ABC)
 
 ### 3. Types (`types.py`)
 
-**Types avancés disponibles :**
+**Available Advanced Types:**
 
 #### Interval
-- Arithmétique d'intervalles pour propagation d'incertitude
-- Garantit que la vraie valeur est dans l'intervalle
+- Interval arithmetic for uncertainty propagation
+- Guarantees that the true value is within the interval
 
 #### DualNumber
-- Différentiation automatique (forward mode)
-- Calcule valeur + dérivée simultanément
+- Automatic differentiation (forward mode)
+- Computes value + derivative simultaneously
 
 #### LazyExpr
-- Évaluation paresseuse
-- Graphes de calcul
-- Différentiation symbolique
+- Lazy evaluation
+- Computation graphs
+- Symbolic differentiation
 
 #### TracedValue
-- Historique complet des opérations
-- Traçabilité pour debugging
+- Complete operation history
+- Traceability for debugging
 
 #### StochasticValue
-- Arrondi stochastique
-- Élimine le biais systématique
+- Stochastic rounding
+- Eliminates systematic bias
 
 ### 4. Tracing (`tracing.py`)
 
-**Responsabilités :**
-- Enregistrement des erreurs numériques
-- Analyse de précision
-- Détection d'overflow/underflow
-- Rapports et statistiques
+**Responsibilities:**
+- Recording numerical errors
+- Precision analysis
+- Overflow/underflow detection
+- Reports and statistics
 
-**Composants :**
-- `NumericTracer` : Traceur principal
-- `PrecisionAnalyzer` : Analyse de précision
-- `OverflowDetector` : Détection d'overflow
-- `ErrorEvent`, `ErrorType`, `ErrorSeverity` : Types d'événements
+**Components:**
+- `NumericTracer` : Main tracer
+- `PrecisionAnalyzer` : Precision analysis
+- `OverflowDetector` : Overflow detection
+- `ErrorEvent`, `ErrorType`, `ErrorSeverity` : Event types
 
-## Flux de données
+## Data Flow
 
-### Addition simple
+### Simple Addition
 
 ```
 User calls add(a, b)
@@ -130,18 +130,18 @@ NuclearEngine.add()
     │
     ├─► _handle_special_types()  (Interval, DualNumber, etc.)
     │
-    ├─► _validate_inputs()       (Vérification types)
+    ├─► _validate_inputs()       (Type checking)
     │
-    ├─► _promote_types()         (Conversion types)
+    ├─► _promote_types()         (Type conversion)
     │
-    ├─► _check_pre_operation()   (Détection overflow)
+    ├─► _check_pre_operation()   (Overflow detection)
     │
-    ├─► _compute_add()           (Calcul via backend)
+    ├─► _compute_add()           (Computation via backend)
     │
-    └─► _check_post_operation()  (Vérification résultat)
+    └─► _check_post_operation()  (Result verification)
 ```
 
-### Avec tracing
+### With Tracing
 
 ```
 Operation
@@ -156,7 +156,7 @@ Operation
         └─► Record event
 ```
 
-## Sélection de backend
+## Backend Selection
 
 ```
 Data Input
@@ -172,7 +172,7 @@ Data Input
     └─► NumPy available? ──► NumPyBackend
 ```
 
-## Gestion des erreurs
+## Error Handling
 
 ```
 Error Detection
@@ -186,12 +186,11 @@ Error Detection
     └─► Type Coercion ──► Warning or Error
 ```
 
-## Extensibilité
+## Extensibility
 
-Le système est conçu pour être extensible :
+The system is designed to be extensible:
 
-1. **Nouveaux backends** : Implémenter l'interface `Backend`
-2. **Nouveaux types** : Ajouter la gestion dans `_handle_special_types()`
-3. **Nouvelles politiques** : Ajouter des enums et logique dans `NuclearConfig`
-4. **Nouveaux traceurs** : Étendre `NumericTracer` ou créer des analyseurs spécialisés
-
+1. **New backends** : Implement the `Backend` interface
+2. **New types** : Add handling in `_handle_special_types()`
+3. **New policies** : Add enums and logic in `NuclearConfig`
+4. **New tracers** : Extend `NumericTracer` or create specialized analyzers

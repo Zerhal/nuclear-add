@@ -1,65 +1,65 @@
-# Documentation Nuclear Add
+# Nuclear Add Documentation
 
-Bienvenue dans la documentation complète de Nuclear Add, le module d'addition le plus paranoïaque jamais créé.
+Welcome to the complete documentation of Nuclear Add, the most paranoid addition module ever created.
 
-## 📚 Table des matières
+## 📚 Table of Contents
 
-1. [Architecture](architecture.md) - Vue d'ensemble de l'architecture du système
-2. [API Reference](api_reference.md) - Documentation complète de l'API
-3. [Guide des méthodes](methods_guide.md) - Guide pratique d'utilisation
-4. [Décisions de conception](design_decisions.md) - Pourquoi ces choix ont été faits
-5. [Diagrammes](diagrams.md) - Schémas et diagrammes visuels (Mermaid)
-6. [Guide de contribution](contributing.md) - Comment contribuer au projet
+1. [Architecture](architecture.md) - System architecture overview
+2. [API Reference](api_reference.md) - Complete API documentation
+3. [Methods Guide](methods_guide.md) - Practical usage guide
+4. [Design Decisions](design_decisions.md) - Why these choices were made
+5. [Diagrams](diagrams.md) - Visual schemas and diagrams (Mermaid)
+6. [Contributing Guide](contributing.md) - How to contribute to the project
 
-## 🚀 Démarrage rapide
+## 🚀 Quick Start
 
 ### Installation
 
 ```bash
-# Installation en mode développement
+# Development installation
 uv pip install -e .
 
-# Ou depuis un autre projet
+# Or from another project
 uv pip install -e /path/to/nuclear_add
 ```
 
-### Utilisation basique
+### Basic Usage
 
 ```python
 from nuclear_add import add
 
-# Addition simple
+# Simple addition
 result = add(2, 3)  # 5
 
-# Avec précision décimale
+# With decimal precision
 from decimal import Decimal
 result = add(Decimal("0.1"), Decimal("0.2"))  # Decimal('0.3')
 
-# Vectorisation
+# Vectorization
 result = add([1, 2, 3], [4, 5, 6])  # [5, 7, 9]
 ```
 
-## 🎯 Cas d'usage principaux
+## 🎯 Main Use Cases
 
-### 1. Calcul financier
+### 1. Financial Calculations
 
 ```python
 from nuclear_add import add
 from decimal import Decimal
 
-montant1 = Decimal("100.50")
-montant2 = Decimal("0.25")
-total = add(montant1, montant2)  # Decimal('100.75')
+amount1 = Decimal("100.50")
+amount2 = Decimal("0.25")
+total = add(amount1, amount2)  # Decimal('100.75')
 ```
 
-### 2. Calcul scientifique
+### 2. Scientific Computing
 
 ```python
 from nuclear_add import sum_safe
 
-# Somme précise de mesures
-mesures = [0.1, 0.2, 0.3, ...]  # 1000 valeurs
-total = sum_safe(mesures, precision="kahan")
+# Precise sum of measurements
+measurements = [0.1, 0.2, 0.3, ...]  # 1000 values
+total = sum_safe(measurements, precision="kahan")
 ```
 
 ### 3. Machine Learning
@@ -70,65 +70,62 @@ from nuclear_add import gradient
 def loss_function(weight):
     return weight * weight * weight
 
-grad = gradient(loss_function, 2.0)  # Gradient automatique
+grad = gradient(loss_function, 2.0)  # Automatic gradient
 ```
 
-### 4. Simulation physique
+### 4. Physics Simulation
 
 ```python
 from nuclear_add.types import Interval
 
-# Propagation d'incertitude
+# Uncertainty propagation
 position = Interval.from_value(1.0, ulp_error=1)
-vitesse = Interval.from_value(0.1, ulp_error=1)
+velocity = Interval.from_value(0.1, ulp_error=1)
 
 for dt in time_steps:
-    position = position + vitesse * dt
+    position = position + velocity * dt
 
-print(f"Position: {position}, Incertitude: {position.width}")
+print(f"Position: {position}, Uncertainty: {position.width}")
 ```
 
-## 📖 Structure de la documentation
+## 📖 Documentation Structure
 
-- **Architecture** : Comprendre comment le système est construit
-- **API Reference** : Documentation complète de toutes les fonctions et classes
-- **Guide des méthodes** : Exemples pratiques pour chaque fonctionnalité
-- **Décisions de conception** : Comprendre les choix techniques
+- **Architecture** : Understand how the system is built
+- **API Reference** : Complete documentation of all functions and classes
+- **Methods Guide** : Practical examples for each feature
+- **Design Decisions** : Understand technical choices
 
-## 🔗 Liens utiles
+## 🔗 Useful Links
 
-- [README principal](../README.md)
-- [Guide d'installation](../INSTALL.md)
-- [Guide d'utilisation](../USAGE.md)
-- [Exemple d'utilisation](../example_usage.py)
+- [Main README](../README.md)
+- [Changelog](../CHANGELOG.md)
 
-## 💡 Concepts clés
+## 💡 Key Concepts
 
-### Modes de précision
+### Precision Modes
 
-- `auto` : Détection automatique
-- `float64` : Double précision IEEE 754
-- `decimal` : Précision arbitraire
-- `fraction` : Exact (rationnel)
-- `interval` : Arithmétique d'intervalles
+- `auto` : Automatic detection
+- `float64` : IEEE 754 double precision
+- `decimal` : Arbitrary precision
+- `fraction` : Exact (rational)
+- `interval` : Interval arithmetic
 
-### Modes de calcul
+### Computation Modes
 
-- `strict` : Toutes les vérifications (défaut)
-- `fast` : Optimisé, moins de vérifications
-- `paranoid` : Toutes les vérifications + tracing complet
+- `strict` : All checks enabled (default)
+- `fast` : Optimized, fewer checks
+- `paranoid` : All checks + complete tracing
 
-### Politiques d'erreur
+### Error Policies
 
-- `raise` : Lever une exception (défaut)
-- `inf` / `propagate` : Retourner une valeur spéciale
-- `saturate` / `replace` : Remplacer par une valeur sûre
+- `raise` : Raise an exception (default)
+- `inf` / `propagate` : Return a special value
+- `saturate` / `replace` : Replace with a safe value
 
-## 🎓 Apprendre par l'exemple
+## 🎓 Learn by Example
 
-Consultez [methods_guide.md](methods_guide.md) pour des exemples détaillés de chaque fonctionnalité.
+See [methods_guide.md](methods_guide.md) for detailed examples of each feature.
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Pour contribuer au projet, consultez le README principal et les décisions de conception pour comprendre la philosophie du projet.
-
+To contribute to the project, see the main README and design decisions to understand the project philosophy.

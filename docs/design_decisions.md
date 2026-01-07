@@ -1,144 +1,144 @@
-# Décisions de conception
+# Design Decisions
 
-## Philosophie de design
+## Design Philosophy
 
-### 1. Paranoïa par défaut
+### 1. Paranoia by Default
 
-**Décision :** Le mode par défaut est `STRICT` avec toutes les vérifications activées.
+**Decision:** Default mode is `STRICT` with all checks enabled.
 
-**Raison :** Mieux vaut détecter les erreurs silencieuses que de les ignorer. Les utilisateurs peuvent choisir `FAST` s'ils veulent des performances.
+**Reason:** Better to detect silent errors than ignore them. Users can choose `FAST` if they want performance.
 
-**Impact :**
-- Performance légèrement réduite (acceptable pour la plupart des cas)
-- Détection proactive des problèmes numériques
-- Comportement prévisible et sûr
+**Impact:**
+- Slightly reduced performance (acceptable for most cases)
+- Proactive detection of numerical problems
+- Predictable and safe behavior
 
-### 2. Types spéciaux intégrés
+### 2. Built-in Special Types
 
-**Décision :** Support natif pour `Interval`, `DualNumber`, `LazyExpr`, etc.
+**Decision:** Native support for `Interval`, `DualNumber`, `LazyExpr`, etc.
 
-**Raison :** Ces types résolvent des problèmes réels (incertitude, gradients, optimisation).
+**Reason:** These types solve real problems (uncertainty, gradients, optimization).
 
-**Impact :**
-- API unifiée pour différents besoins
-- Pas besoin de bibliothèques externes pour ces fonctionnalités
-- Cohérence dans le comportement
+**Impact:**
+- Unified API for different needs
+- No need for external libraries for these features
+- Consistent behavior
 
-### 3. Backends multiples
+### 3. Multiple Backends
 
-**Décision :** Architecture avec plusieurs backends (Python, NumPy, CuPy, Numba).
+**Decision:** Architecture with multiple backends (Python, NumPy, CuPy, Numba).
 
-**Raison :** Différents besoins nécessitent différents outils :
-- Python : portable, référence
-- NumPy : performance, SIMD
-- CuPy : GPU, grandes données
-- Numba : JIT, calculs intensifs
-- Decimal : précision arbitraire
+**Reason:** Different needs require different tools:
+- Python: portable, reference
+- NumPy: performance, SIMD
+- CuPy: GPU, large data
+- Numba: JIT, intensive computations
+- Decimal: arbitrary precision
 
-**Impact :**
-- Flexibilité maximale
-- Performance optimale selon le contexte
-- Dépendances optionnelles (pas de surcharge)
+**Impact:**
+- Maximum flexibility
+- Optimal performance depending on context
+- Optional dependencies (no overhead)
 
-### 4. Tracing optionnel mais activé par défaut
+### 4. Optional but Enabled by Default Tracing
 
-**Décision :** Tracing activé par défaut mais peut être désactivé.
+**Decision:** Tracing enabled by default but can be disabled.
 
-**Raison :** Le tracing aide à comprendre les problèmes mais a un coût en performance.
+**Reason:** Tracing helps understand problems but has a performance cost.
 
-**Impact :**
-- Debugging facilité
-- Performance acceptable (tracing léger)
-- Peut être désactivé pour la production
+**Impact:**
+- Easier debugging
+- Acceptable performance (light tracing)
+- Can be disabled for production
 
-### 5. Vectorisation automatique
+### 5. Automatic Vectorization
 
-**Décision :** Vectorisation activée par défaut.
+**Decision:** Vectorization enabled by default.
 
-**Raison :** Les opérations sur tableaux sont courantes et bénéficient de la vectorisation.
+**Reason:** Array operations are common and benefit from vectorization.
 
-**Impact :**
-- Performance améliorée pour les tableaux
-- API simple (même fonction pour scalaires et tableaux)
-- Broadcasting intuitif
+**Impact:**
+- Improved performance for arrays
+- Simple API (same function for scalars and arrays)
+- Intuitive broadcasting
 
-## Choix techniques
+## Technical Choices
 
-### 1. Structure `src/`
+### 1. `src/` Structure
 
-**Décision :** Utilisation de la structure `src/nuclear_add/` au lieu de `nuclear_add/` à la racine.
+**Decision:** Use `src/nuclear_add/` structure instead of `nuclear_add/` at root.
 
-**Raison :** Meilleure pratique Python moderne :
-- Évite les conflits d'imports
-- Tests plus clairs (testent le package installé)
-- Compatible avec les outils modernes (uv, hatchling)
+**Reason:** Modern Python best practice:
+- Avoids import conflicts
+- Clearer tests (test installed package)
+- Compatible with modern tools (uv, hatchling)
 
-### 2. Hatchling au lieu de setuptools
+### 2. Hatchling instead of setuptools
 
-**Décision :** Utilisation de `hatchling` comme build backend.
+**Decision:** Use `hatchling` as build backend.
 
-**Raison :**
-- Plus moderne et simple
-- Meilleure intégration avec uv
-- Configuration plus claire
+**Reason:**
+- More modern and simple
+- Better integration with uv
+- Clearer configuration
 
-### 3. Type hints partout
+### 3. Type Hints Everywhere
 
-**Décision :** Type hints complets dans tout le code.
+**Decision:** Complete type hints in all code.
 
-**Raison :**
-- Meilleure documentation
-- Vérification statique avec mypy
-- Meilleure expérience IDE
+**Reason:**
+- Better documentation
+- Static checking with mypy
+- Better IDE experience
 
-### 4. Docstrings en anglais
+### 4. English Docstrings
 
-**Décision :** Toute la documentation en anglais.
+**Decision:** All documentation in English.
 
-**Raison :**
-- Standard de l'industrie
-- Accessible à un public international
-- Compatible avec les outils de documentation automatique
+**Reason:**
+- Industry standard
+- Accessible to international audience
+- Compatible with automatic documentation tools
 
-### 5. Tests avec pytest
+### 5. Tests with pytest
 
-**Décision :** Utilisation de pytest pour les tests.
+**Decision:** Use pytest for tests.
 
-**Raison :**
-- Standard de l'industrie
-- Fonctionnalités avancées (fixtures, paramétrisation)
-- Intégration facile avec la couverture
+**Reason:**
+- Industry standard
+- Advanced features (fixtures, parametrization)
+- Easy integration with coverage
 
 ## Trade-offs
 
-### Performance vs Sécurité
+### Performance vs Security
 
-**Choix :** Mode `STRICT` par défaut (sécurité) avec option `FAST` (performance).
+**Choice:** `STRICT` mode by default (security) with `FAST` option (performance).
 
-**Justification :** Pour 99% des cas, la performance est acceptable. Pour le 1% critique, `FAST` est disponible.
+**Justification:** For 99% of cases, performance is acceptable. For the critical 1%, `FAST` is available.
 
-### Simplicité vs Fonctionnalités
+### Simplicity vs Features
 
-**Choix :** API simple (`add()`) avec beaucoup de fonctionnalités optionnelles.
+**Choice:** Simple API (`add()`) with many optional features.
 
-**Justification :** L'API de base reste simple, les fonctionnalités avancées sont accessibles via des paramètres ou des types spéciaux.
+**Justification:** Base API remains simple, advanced features accessible via parameters or special types.
 
-### Dépendances vs Fonctionnalités
+### Dependencies vs Features
 
-**Choix :** Dépendances optionnelles (NumPy, CuPy, etc.) avec fallback Python pur.
+**Choice:** Optional dependencies (NumPy, CuPy, etc.) with pure Python fallback.
 
-**Justification :** Le module fonctionne sans dépendances externes, mais peut utiliser des optimisations si disponibles.
+**Justification:** Module works without external dependencies, but can use optimizations if available.
 
-## Extensibilité
+## Extensibility
 
-### Points d'extension
+### Extension Points
 
-1. **Nouveaux backends** : Implémenter l'interface `Backend`
-2. **Nouveaux types** : Ajouter la gestion dans `_handle_special_types()`
-3. **Nouvelles politiques** : Ajouter des enums dans `core.py`
-4. **Nouveaux traceurs** : Étendre `NumericTracer`
+1. **New backends** : Implement the `Backend` interface
+2. **New types** : Add handling in `_handle_special_types()`
+3. **New policies** : Add enums in `core.py`
+4. **New tracers** : Extend `NumericTracer`
 
-### Exemple : Ajouter un nouveau backend
+### Example: Adding a New Backend
 
 ```python
 class MyCustomBackend(Backend):
@@ -151,39 +151,38 @@ class MyCustomBackend(Backend):
         return BackendCapabilities(...)
     
     def add(self, a, b):
-        # Implémentation
+        # Implementation
         pass
 ```
 
-## Considérations de performance
+## Performance Considerations
 
-### Optimisations implémentées
+### Implemented Optimizations
 
-1. **Lazy loading** : Backends chargés à la demande
-2. **Cache** : Conversions de type mises en cache
-3. **Vectorisation** : Utilisation de NumPy quand disponible
-4. **JIT** : Support Numba pour compilation
+1. **Lazy loading** : Backends loaded on demand
+2. **Cache** : Type conversions cached
+3. **Vectorization** : Use NumPy when available
+4. **JIT** : Numba support for compilation
 
-### Points d'attention
+### Points of Attention
 
-1. **Mode PARANOID** : 10-100x plus lent (attendu)
-2. **Tracing** : Léger overhead, peut être désactivé
-3. **Backends GPU** : Overhead de transfert CPU↔GPU
+1. **PARANOID mode** : 10-100x slower (expected)
+2. **Tracing** : Light overhead, can be disabled
+3. **GPU backends** : CPU↔GPU transfer overhead
 
-## Compatibilité
+## Compatibility
 
-### Versions Python
+### Python Versions
 
-- Support : Python 3.10+
-- Raison : Utilisation de fonctionnalités modernes (type hints, dataclasses)
+- Support: Python 3.10+
+- Reason: Use of modern features (type hints, dataclasses)
 
-### Plateformes
+### Platforms
 
 - Windows, Linux, macOS
-- Backends GPU : Nécessitent CUDA (optionnel)
+- GPU backends: Require CUDA (optional)
 
-### Dépendances
+### Dependencies
 
-- Aucune dépendance requise (fonctionne seul)
-- Dépendances optionnelles : NumPy, CuPy, Numba, Pint, SymPy
-
+- No required dependencies (works standalone)
+- Optional dependencies: NumPy, CuPy, Numba, Pint, SymPy

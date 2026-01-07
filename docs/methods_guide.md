@@ -1,106 +1,106 @@
-# Guide des méthodes
+# Methods Guide
 
-## Méthodes d'addition
+## Addition Methods
 
-### 1. Addition basique
+### 1. Basic Addition
 
 ```python
 from nuclear_add import add
 
-# Entiers
+# Integers
 add(2, 3)  # 5
 
-# Flottants
+# Floats
 add(1.5, 2.5)  # 4.0
 
-# Complexes
+# Complex numbers
 add(1+2j, 3+4j)  # (4+6j)
 ```
 
-### 2. Addition avec précision contrôlée
+### 2. Addition with Controlled Precision
 
 ```python
 from decimal import Decimal
 from fractions import Fraction
 
-# Précision décimale arbitraire
+# Arbitrary decimal precision
 add(Decimal("0.1"), Decimal("0.2"))  # Decimal('0.3')
 
-# Fractions exactes
+# Exact fractions
 add(Fraction(1, 3), Fraction(1, 6))  # Fraction(1, 2)
 
-# Forcer un mode de précision
+# Force a precision mode
 add(0.1, 0.2, precision="decimal")  # Decimal('0.3')
 add(0.1, 0.2, precision="fraction")  # Fraction(3, 10)
 ```
 
-### 3. Addition avec gestion d'erreur
+### 3. Addition with Error Handling
 
 ```python
-# Overflow - lever une exception (défaut)
+# Overflow - raise exception (default)
 try:
     add(1e308, 1e308)
 except OverflowError:
-    print("Overflow détecté!")
+    print("Overflow detected!")
 
-# Overflow - retourner inf
+# Overflow - return inf
 add(1e308, 1e308, overflow="inf")  # inf
 
-# Overflow - saturer
+# Overflow - saturate
 add(1e308, 1e308, overflow="saturate")  # ~1.79e308
 
-# NaN - lever une exception (défaut)
+# NaN - raise exception (default)
 try:
     add(float('nan'), 1)
 except ArithmeticError:
-    print("NaN détecté!")
+    print("NaN detected!")
 
-# NaN - propager
+# NaN - propagate
 add(float('nan'), 1, nan="propagate")  # nan
 
-# NaN - remplacer
+# NaN - replace
 add(float('nan'), 1, nan="replace")  # 0.0
 ```
 
-### 4. Addition vectorisée
+### 4. Vectorized Addition
 
 ```python
-# Vecteur + Vecteur
+# Vector + Vector
 add([1, 2, 3], [4, 5, 6])  # [5, 7, 9]
 
-# Broadcasting (scalaire + vecteur)
+# Broadcasting (scalar + vector)
 add([1, 2, 3], 10)  # [11, 12, 13]
 
 # Tuples
 add((1.5, 2.5), (3.5, 4.5))  # (5.0, 7.0)
 ```
 
-## Méthodes de sommation
+## Summation Methods
 
-### 1. Somme sécurisée (Kahan)
+### 1. Safe Sum (Kahan)
 
 ```python
 from nuclear_add import sum_safe
 
 values = [0.1] * 100
-result = sum_safe(values, precision="kahan")  # 10.0 (précis)
+result = sum_safe(values, precision="kahan")  # 10.0 (precise)
 ```
 
-### 2. Somme par paires
+### 2. Pairwise Sum
 
 ```python
-result = sum_safe(values, precision="pairwise")  # Bon compromis vitesse/précision
+result = sum_safe(values, precision="pairwise")  # Good speed/precision trade-off
 ```
 
-### 3. Somme Neumaier
+### 3. Neumaier Sum
 
 ```python
-result = sum_safe(values, precision="neumaier")  # Amélioration de Kahan
+result = sum_safe(values, precision="neumaier")  # Kahan improvement
 ```
 
-## Méthodes de différentiation
+## Differentiation Methods
 
-### 1. Gradient automatique
+### 1. Automatic Gradient
 
 ```python
 from nuclear_add import gradient
@@ -122,7 +122,7 @@ print(y.real)  # 15.0 (= f(3))
 print(y.dual)  # 8.0 (= f'(3) = 2x + 2)
 ```
 
-### 3. Gradient symbolique (LazyExpr)
+### 3. Symbolic Gradient (LazyExpr)
 
 ```python
 from nuclear_add.types import LazyExpr
@@ -133,73 +133,73 @@ grad = y.grad("x")
 print(grad.eval())  # 4.0 (= 2x)
 ```
 
-## Méthodes d'intervalles
+## Interval Methods
 
-### 1. Création d'intervalles
+### 1. Interval Creation
 
 ```python
 from nuclear_add.types import Interval
 
-# Depuis une valeur avec erreur ULP
+# From a value with ULP error
 a = Interval.from_value(0.1, ulp_error=1)
 
-# Intervalle exact
+# Exact interval
 b = Interval.exact(0.2)
 
-# Intervalle manuel
+# Manual interval
 c = Interval(0.99, 1.01)  # 1.0 ± 0.01
 ```
 
-### 2. Opérations sur intervalles
+### 2. Interval Operations
 
 ```python
 a = Interval.from_value(0.1)
 b = Interval.from_value(0.2)
 c = a + b
 
-# Vérifier l'appartenance
+# Check membership
 print(0.3 in c)  # True
 
-# Propriétés
+# Properties
 print(c.midpoint)  # 0.3
-print(c.width)  # Largeur de l'intervalle
-print(c.relative_error)  # Erreur relative
+print(c.width)  # Interval width
+print(c.relative_error)  # Relative error
 ```
 
-### 3. Propagation d'incertitude
+### 3. Uncertainty Propagation
 
 ```python
-# Simuler une chaîne de calculs
+# Simulate a computation chain
 pos = Interval.from_value(1.0, ulp_error=1)
 for i in range(10):
     pos = pos + Interval.from_value(0.1, ulp_error=1)
 
-print(f"Position finale: {pos}")
-print(f"Incertitude: {pos.width}")
+print(f"Final position: {pos}")
+print(f"Uncertainty: {pos.width}")
 ```
 
-## Méthodes de configuration
+## Configuration Methods
 
-### 1. Presets de configuration
+### 1. Configuration Presets
 
 ```python
 from nuclear_add.core import NuclearConfig, NuclearEngine
 
-# Mode strict (défaut)
+# Strict mode (default)
 config = NuclearConfig.strict()
 engine = NuclearEngine(config)
 
-# Mode rapide
+# Fast mode
 config = NuclearConfig.fast()
 
-# Mode paranoïaque
+# Paranoid mode
 config = NuclearConfig.paranoid()
 
-# Mode scientifique
+# Scientific mode
 config = NuclearConfig.scientific(precision=100)
 ```
 
-### 2. Configuration personnalisée
+### 2. Custom Configuration
 
 ```python
 from nuclear_add.core import NuclearConfig, MathMode, PrecisionMode
@@ -213,46 +213,46 @@ config = NuclearConfig(
 )
 ```
 
-## Méthodes de tracing
+## Tracing Methods
 
-### 1. Utilisation basique
+### 1. Basic Usage
 
 ```python
 from nuclear_add.tracing import NumericTracer
 
 tracer = NumericTracer()
 
-# ... effectuer des opérations ...
+# ... perform operations ...
 from nuclear_add import add
 add(1e308, 1e308, overflow="inf")
 
-# Obtenir le résumé
+# Get summary
 summary = tracer.get_summary()
 print(summary)
 ```
 
-### 2. Filtrage des événements
+### 2. Event Filtering
 
 ```python
 from nuclear_add.tracing import ErrorType, ErrorSeverity
 
-# Par type
+# By type
 overflow_events = tracer.get_by_type(ErrorType.OVERFLOW)
 
-# Par sévérité minimale
+# By minimum severity
 errors = tracer.get_by_severity(ErrorSeverity.ERROR)
 ```
 
-### 3. Export JSON
+### 3. JSON Export
 
 ```python
 json_data = tracer.to_json()
-# Sauvegarder ou analyser
+# Save or analyze
 ```
 
-## Méthodes de backend
+## Backend Methods
 
-### 1. Sélection manuelle
+### 1. Manual Selection
 
 ```python
 from nuclear_add.backends import get_backend
@@ -264,44 +264,44 @@ backend = get_backend("decimal", precision=100)
 result = backend.add("0.1", "0.2")
 ```
 
-### 2. Sélection automatique
+### 2. Automatic Selection
 
 ```python
-backend = get_backend("auto")  # Choisit le meilleur disponible
+backend = get_backend("auto")  # Chooses best available
 ```
 
-### 3. Liste des backends disponibles
+### 3. List Available Backends
 
 ```python
 from nuclear_add.backends import list_available_backends
 
 available = list_available_backends()
-# ['python', 'numpy'] si NumPy est installé
+# ['python', 'numpy'] if NumPy is installed
 ```
 
-## Méthodes avancées
+## Advanced Methods
 
-### 1. Évaluation paresseuse
+### 1. Lazy Evaluation
 
 ```python
 from nuclear_add.types import LazyExpr
 
 x = LazyExpr.var("x", 3.0)
 y = LazyExpr.var("y", 4.0)
-z = (x * x + y * y).sqrt()  # Pas encore calculé!
+z = (x * x + y * y).sqrt()  # Not computed yet!
 
-result = z.eval()  # 5.0 (calculé maintenant)
+result = z.eval()  # 5.0 (computed now)
 ```
 
-### 2. Graphe de calcul
+### 2. Computation Graph
 
 ```python
 expr = x + y
-graph = expr.to_graph()  # Format DOT
+graph = expr.to_graph()  # DOT format
 print(graph)
 ```
 
-### 3. Valeurs tracées
+### 3. Traced Values
 
 ```python
 from nuclear_add.types import TracedValue
@@ -311,15 +311,14 @@ b = TracedValue(5.0)
 c = a + b
 d = c * TracedValue(2.0)
 
-print(d.get_full_trace())  # Historique complet
+print(d.get_full_trace())  # Complete history
 ```
 
-### 4. Arrondi stochastique
+### 4. Stochastic Rounding
 
 ```python
 from nuclear_add.types import StochasticValue
 
 sv = StochasticValue(0.123456789, _rng_seed=42)
-# Élimine le biais systématique dans les longues sommes
+# Eliminates systematic bias in long sums
 ```
-

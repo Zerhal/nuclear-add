@@ -1,10 +1,10 @@
-# Diagrammes et schémas
+# Diagrams and Schemas
 
-## Architecture système (Mermaid)
+## System Architecture (Mermaid)
 
 ```mermaid
 graph TB
-    User[Utilisateur] --> API[API Layer]
+    User[User] --> API[API Layer]
     API --> add[add function]
     API --> sum_safe[sum_safe function]
     API --> gradient[gradient function]
@@ -33,48 +33,48 @@ graph TB
     Tracer --> Detector[OverflowDetector]
 ```
 
-## Flux d'exécution d'une addition
+## Addition Execution Flow
 
 ```mermaid
 flowchart TD
-    Start[add a b] --> CheckTypes{Types spéciaux?}
-    CheckTypes -->|Interval| IntervalAdd[Addition Interval]
-    CheckTypes -->|DualNumber| DualAdd[Addition Dual]
-    CheckTypes -->|LazyExpr| LazyAdd[Addition Lazy]
-    CheckTypes -->|Normal| Validate[Valider inputs]
+    Start[add a b] --> CheckTypes{Special types?}
+    CheckTypes -->|Interval| IntervalAdd[Interval Addition]
+    CheckTypes -->|DualNumber| DualAdd[Dual Addition]
+    CheckTypes -->|LazyExpr| LazyAdd[Lazy Addition]
+    CheckTypes -->|Normal| Validate[Validate inputs]
     
-    Validate --> Promote[Promouvoir types]
-    Promote --> PreCheck{Vérification pré-op}
-    PreCheck -->|Overflow?| OverflowPolicy{Politique}
+    Validate --> Promote[Promote types]
+    Promote --> PreCheck{Pre-op check}
+    PreCheck -->|Overflow?| OverflowPolicy{Policy}
     OverflowPolicy -->|RAISE| RaiseError[OverflowError]
-    OverflowPolicy -->|INF| Continue[Continuer]
-    PreCheck -->|OK| Compute[Calculer]
+    OverflowPolicy -->|INF| Continue[Continue]
+    PreCheck -->|OK| Compute[Compute]
     
     Compute --> Backend{Backend}
-    Backend -->|Python| PythonOp[Opération Python]
-    Backend -->|NumPy| NumPyOp[Opération NumPy]
-    Backend -->|GPU| GPUOp[Opération GPU]
+    Backend -->|Python| PythonOp[Python Operation]
+    Backend -->|NumPy| NumPyOp[NumPy Operation]
+    Backend -->|GPU| GPUOp[GPU Operation]
     
-    PythonOp --> PostCheck[Vérification post-op]
+    PythonOp --> PostCheck[Post-op check]
     NumPyOp --> PostCheck
     GPUOp --> PostCheck
     
     PostCheck --> CheckNaN{NaN?}
-    CheckNaN -->|Oui| NaNPolicy{Politique}
+    CheckNaN -->|Yes| NaNPolicy{Policy}
     NaNPolicy -->|RAISE| RaiseNaN[ArithmeticError]
     NaNPolicy -->|REPLACE| Replace[0.0]
     NaNPolicy -->|PROPAGATE| Continue
     
-    CheckNaN -->|Non| CheckInf{Inf?}
-    CheckInf -->|Oui| InfPolicy{Politique}
+    CheckNaN -->|No| CheckInf{Inf?}
+    CheckInf -->|Yes| InfPolicy{Policy}
     InfPolicy -->|RAISE| RaiseInf[OverflowError]
     InfPolicy -->|SATURATE| Saturate[MAX_FLOAT]
     
-    CheckInf -->|Non| Paranoid{Mode PARANOID?}
-    Paranoid -->|Oui| PrecisionCheck[Vérifier précision]
-    Paranoid -->|Non| Return[Retourner résultat]
+    CheckInf -->|No| Paranoid{PARANOID mode?}
+    Paranoid -->|Yes| PrecisionCheck[Check precision]
+    Paranoid -->|No| Return[Return result]
     
-    PrecisionCheck --> Trace[Logger dans Tracer]
+    PrecisionCheck --> Trace[Log to Tracer]
     Trace --> Return
     
     IntervalAdd --> Return
@@ -84,7 +84,7 @@ flowchart TD
     Saturate --> Return
 ```
 
-## Hiérarchie des types
+## Type Hierarchy
 
 ```mermaid
 classDiagram
@@ -136,7 +136,7 @@ classDiagram
     Number <|-- StochasticValue
 ```
 
-## Architecture des backends
+## Backend Architecture
 
 ```mermaid
 classDiagram
@@ -181,7 +181,7 @@ classDiagram
     Backend <|-- DecimalBackend
 ```
 
-## Système de tracing
+## Tracing System
 
 ```mermaid
 sequenceDiagram
@@ -208,32 +208,32 @@ sequenceDiagram
     Tracer-->>User: Summary dict
 ```
 
-## Sélection de backend
+## Backend Selection
 
 ```mermaid
 flowchart TD
     Start[get_backend name] --> Check{name == auto?}
-    Check -->|Non| Direct[Retourner backend spécifique]
-    Check -->|Oui| Precision{Précision requise?}
+    Check -->|No| Direct[Return specific backend]
+    Check -->|Yes| Precision{Precision required?}
     
-    Precision -->|Oui| Decimal[DecimalBackend]
-    Precision -->|Non| Size{Taille données}
+    Precision -->|Yes| Decimal[DecimalBackend]
+    Precision -->|No| Size{Data size}
     
-    Size -->|Petit < 100| Python[PythonBackend]
-    Size -->|Grand| GPU{GPU disponible?}
+    Size -->|Small < 100| Python[PythonBackend]
+    Size -->|Large| GPU{GPU available?}
     
-    GPU -->|Oui| PreferGPU{Préférer GPU?}
-    PreferGPU -->|Oui| CuPy[CuPyBackend]
-    PreferGPU -->|Non| Numba{Numba disponible?}
+    GPU -->|Yes| PreferGPU{Prefer GPU?}
+    PreferGPU -->|Yes| CuPy[CuPyBackend]
+    PreferGPU -->|No| Numba{Numba available?}
     
-    GPU -->|Non| Numba
-    Numba -->|Oui| NumbaBackend[NumbaBackend]
-    Numba -->|Non| NumPy{NumPy disponible?}
+    GPU -->|No| Numba
+    Numba -->|Yes| NumbaBackend[NumbaBackend]
+    Numba -->|No| NumPy{NumPy available?}
     
-    NumPy -->|Oui| NumPyBackend[NumPyBackend]
-    NumPy -->|Non| Python
+    NumPy -->|Yes| NumPyBackend[NumPyBackend]
+    NumPy -->|No| Python
     
-    Direct --> Return[Retourner backend]
+    Direct --> Return[Return backend]
     Decimal --> Return
     Python --> Return
     CuPy --> Return
@@ -241,7 +241,7 @@ flowchart TD
     NumPyBackend --> Return
 ```
 
-## Schéma ASCII simple
+## Simple ASCII Schema
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -274,7 +274,7 @@ flowchart TD
 └─────────┘    └──────────┘
 ```
 
-## États de configuration
+## Configuration States
 
 ```mermaid
 stateDiagram-v2
@@ -283,10 +283,10 @@ stateDiagram-v2
     [*] --> PARANOID: paranoid()
     [*] --> SCIENTIFIC: scientific()
     
-    STRICT --> STRICT: Toutes vérifications
-    FAST --> FAST: Moins de vérifications
-    PARANOID --> PARANOID: Toutes vérifications + tracing
-    SCIENTIFIC --> SCIENTIFIC: Haute précision
+    STRICT --> STRICT: All checks
+    FAST --> FAST: Fewer checks
+    PARANOID --> PARANOID: All checks + tracing
+    SCIENTIFIC --> SCIENTIFIC: High precision
     
     STRICT: Overflow: RAISE
     STRICT: NaN: RAISE
@@ -306,7 +306,7 @@ stateDiagram-v2
     SCIENTIFIC: Kahan: ON
 ```
 
-## Flux de données avec types spéciaux
+## Data Flow with Special Types
 
 ```mermaid
 flowchart LR
@@ -330,4 +330,3 @@ flowchart LR
     R4 --> Out
     R5 --> Out
 ```
-

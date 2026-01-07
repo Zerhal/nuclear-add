@@ -1,64 +1,64 @@
-# Guide de contribution
+# Contributing Guide
 
-## Structure du projet
+## Project Structure
 
 ```
 nuclear_add/
-├── src/nuclear_add/     # Code source principal
-├── tests/               # Tests unitaires
+├── src/nuclear_add/     # Main source code
+├── tests/               # Unit tests
 ├── docs/                # Documentation
 └── .github/workflows/   # CI/CD
 ```
 
-## Workflow de développement
+## Development Workflow
 
 ### 1. Setup
 
 ```bash
-# Cloner le projet
+# Clone the project
 git clone <repo-url>
 cd nuclear_add
 
-# Installer les dépendances
+# Install dependencies
 uv sync --extra dev
 
-# Installer le module en mode développement
+# Install the module in development mode
 uv pip install -e .
 ```
 
-### 2. Développement
+### 2. Development
 
 ```bash
-# Lancer les tests
+# Run tests
 uv run pytest
 
-# Vérifier le linting
+# Check linting
 uv run ruff check src/ tests/
 uv run black --check src/ tests/
 uv run mypy src/nuclear_add
 
-# Formater le code
+# Format code
 uv run black src/ tests/
 uv run ruff check --fix src/ tests/
 ```
 
 ### 3. Tests
 
-- Écrire des tests pour toute nouvelle fonctionnalité
-- Maintenir la couverture de code > 60%
-- Tests dans `tests/` avec préfixe `test_`
+- Write tests for all new features
+- Maintain code coverage > 60%
+- Tests in `tests/` with `test_` prefix
 
 ### 4. Documentation
 
-- Mettre à jour la docstring pour toute nouvelle fonction/classe
-- Ajouter des exemples dans `docs/methods_guide.md` si nécessaire
-- Mettre à jour `docs/api_reference.md` pour les nouvelles APIs
+- Update docstrings for all new functions/classes
+- Add examples in `docs/methods_guide.md` if needed
+- Update `docs/api_reference.md` for new APIs
 
-## Standards de code
+## Code Standards
 
-### Type hints
+### Type Hints
 
-Toutes les fonctions doivent avoir des type hints :
+All functions must have type hints:
 
 ```python
 def my_function(a: float, b: float) -> float:
@@ -68,7 +68,7 @@ def my_function(a: float, b: float) -> float:
 
 ### Docstrings
 
-Format Google style :
+Google style format:
 
 ```python
 def add(a: Any, b: Any) -> Any:
@@ -89,19 +89,19 @@ def add(a: Any, b: Any) -> Any:
 
 ### Naming
 
-- Classes : `PascalCase`
-- Fonctions/méthodes : `snake_case`
-- Constantes : `UPPER_SNAKE_CASE`
-- Privé : préfixe `_`
+- Classes: `PascalCase`
+- Functions/methods: `snake_case`
+- Constants: `UPPER_SNAKE_CASE`
+- Private: `_` prefix
 
-## Ajouter un nouveau backend
+## Adding a New Backend
 
-1. Créer une classe héritant de `Backend`
-2. Implémenter toutes les méthodes abstraites
-3. Ajouter au registre dans `backends.py`
-4. Ajouter des tests dans `tests/test_backends.py`
+1. Create a class inheriting from `Backend`
+2. Implement all abstract methods
+3. Add to registry in `backends.py`
+4. Add tests in `tests/test_backends.py`
 
-Exemple :
+Example:
 
 ```python
 class MyBackend(Backend):
@@ -114,34 +114,33 @@ class MyBackend(Backend):
         return BackendCapabilities(...)
     
     def add(self, a, b):
-        # Implémentation
+        # Implementation
         pass
 ```
 
-## Ajouter un nouveau type
+## Adding a New Type
 
-1. Créer la classe dans `types.py`
-2. Ajouter la gestion dans `NuclearEngine._handle_special_types()`
-3. Ajouter des tests
-4. Documenter dans `docs/api_reference.md`
+1. Create the class in `types.py`
+2. Add handling in `NuclearEngine._handle_special_types()`
+3. Add tests
+4. Document in `docs/api_reference.md`
 
-## Processus de PR
+## PR Process
 
-1. Créer une branche depuis `main`
-2. Faire les modifications
-3. Ajouter des tests
-4. Vérifier que tous les tests passent
-5. Mettre à jour la documentation
-6. Créer une PR avec description claire
+1. Create a branch from `main`
+2. Make changes
+3. Add tests
+4. Verify all tests pass
+5. Update documentation
+6. Create PR with clear description
 
-## Checklist avant PR
+## Pre-PR Checklist
 
-- [ ] Tous les tests passent
-- [ ] Couverture de code maintenue
-- [ ] Code formaté (black, ruff)
-- [ ] Type hints complets
-- [ ] Docstrings à jour
-- [ ] Documentation mise à jour
-- [ ] Pas de warnings mypy
-- [ ] Exemples fonctionnels
-
+- [ ] All tests pass
+- [ ] Code coverage maintained
+- [ ] Code formatted (black, ruff)
+- [ ] Complete type hints
+- [ ] Docstrings up to date
+- [ ] Documentation updated
+- [ ] No mypy warnings
+- [ ] Working examples

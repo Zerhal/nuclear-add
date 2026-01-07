@@ -1,28 +1,27 @@
-# Documentation Nuclear Add
+# Nuclear Add Documentation
 
-Cette documentation couvre tous les aspects de Nuclear Add.
+This documentation covers all aspects of Nuclear Add.
 
 ## 📚 Structure
 
-- **[index.md](index.md)** - Point d'entrée de la documentation
-- **[architecture.md](architecture.md)** - Architecture et design du système
-- **[api_reference.md](api_reference.md)** - Référence complète de l'API
-- **[methods_guide.md](methods_guide.md)** - Guide pratique avec exemples
-- **[design_decisions.md](design_decisions.md)** - Décisions de conception et trade-offs
+- **[index.md](index.md)** - Documentation entry point
+- **[architecture.md](architecture.md)** - System architecture and design
+- **[api_reference.md](api_reference.md)** - Complete API reference
+- **[methods_guide.md](methods_guide.md)** - Practical guide with examples
+- **[design_decisions.md](design_decisions.md)** - Design decisions and trade-offs
 
-## 🚀 Démarrage rapide
+## 🚀 Quick Start
 
-1. Lisez [index.md](index.md) pour une vue d'ensemble
-2. Consultez [methods_guide.md](methods_guide.md) pour des exemples pratiques
-3. Référez-vous à [api_reference.md](api_reference.md) pour les détails techniques
+1. Read [index.md](index.md) for an overview
+2. Check [methods_guide.md](methods_guide.md) for practical examples
+3. Refer to [api_reference.md](api_reference.md) for technical details
 
-## 📖 Pour les développeurs
+## 📖 For Developers
 
-- **[architecture.md](architecture.md)** - Comprendre l'architecture interne
-- **[design_decisions.md](design_decisions.md) - Pourquoi ces choix techniques
+- **[architecture.md](architecture.md)** - Understand internal architecture
+- **[design_decisions.md](design_decisions.md)** - Why these technical choices
 
-## 📖 Pour les utilisateurs
+## 📖 For Users
 
-- **[methods_guide.md](methods_guide.md)** - Exemples d'utilisation
-- **[api_reference.md](api_reference.md)** - Documentation de l'API
-
+- **[methods_guide.md](methods_guide.md)** - Usage examples
+- **[api_reference.md](api_reference.md)** - API documentation
