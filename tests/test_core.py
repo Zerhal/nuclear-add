@@ -49,12 +49,12 @@ class TestOverflowHandling:
     def test_overflow_inf(self):
         """Test overflow returns inf."""
         result = add(1e308, 1e308, overflow="inf")
-        assert result == float('inf')
+        assert result == float("inf")
 
     def test_overflow_saturate(self):
         """Test overflow saturation."""
         result = add(1e308, 1e308, overflow="saturate")
-        assert result < float('inf')
+        assert result < float("inf")
 
 
 class TestNaNHandling:
@@ -63,16 +63,16 @@ class TestNaNHandling:
     def test_nan_raise(self):
         """Test NaN raises exception by default."""
         with pytest.raises(ArithmeticError):
-            add(float('nan'), 1)
+            add(float("nan"), 1)
 
     def test_nan_propagate(self):
         """Test NaN propagation."""
-        result = add(float('nan'), 1, nan="propagate")
+        result = add(float("nan"), 1, nan="propagate")
         assert result != result  # NaN comparison
 
     def test_nan_replace(self):
         """Test NaN replacement."""
-        result = add(float('nan'), 1, nan="replace")
+        result = add(float("nan"), 1, nan="replace")
         # NaN + 1 = NaN, which gets replaced by 0.0
         assert result == 0.0
 
@@ -112,6 +112,7 @@ class TestGradient:
 
     def test_simple_gradient(self):
         """Test simple gradient computation."""
+
         def f(x: float) -> float:
             return x * x * x  # f(x) = x³
 
@@ -165,4 +166,3 @@ class TestEngine:
         config = NuclearConfig.fast()
         engine = NuclearEngine(config)
         assert engine.config.math_mode.name == "FAST"
-

@@ -15,11 +15,11 @@ if TYPE_CHECKING:
 class BackendType(Enum):
     """Available backend types."""
 
-    PYTHON = auto()      # Pure Python (portable, slow)
-    NUMPY = auto()       # NumPy SIMD (vectorized)
-    CUPY = auto()        # CuPy GPU (CUDA)
-    NUMBA = auto()       # Numba JIT (compiled)
-    DECIMAL = auto()     # Decimal (arbitrary precision)
+    PYTHON = auto()  # Pure Python (portable, slow)
+    NUMPY = auto()  # NumPy SIMD (vectorized)
+    CUPY = auto()  # CuPy GPU (CUDA)
+    NUMBA = auto()  # Numba JIT (compiled)
+    DECIMAL = auto()  # Decimal (arbitrary precision)
 
 
 @dataclass
@@ -72,6 +72,7 @@ class Backend(ABC):
 # =============================================================================
 # PURE PYTHON BACKEND
 # =============================================================================
+
 
 class PythonBackend(Backend):
     """Pure Python backend - most portable."""
@@ -155,6 +156,7 @@ class PythonBackend(Backend):
 # NUMPY BACKEND (SIMD)
 # =============================================================================
 
+
 class NumPyBackend(Backend):
     """NumPy backend with SIMD optimizations."""
 
@@ -166,6 +168,7 @@ class NumPyBackend(Backend):
     def _check_available(self) -> None:
         try:
             import numpy
+
             self._np = numpy
         except ImportError:
             self._np = None
@@ -178,11 +181,7 @@ class NumPyBackend(Backend):
     @property
     def capabilities(self) -> BackendCapabilities:
         """Backend capabilities."""
-        return BackendCapabilities(
-            vectorized=True,
-            simd=True,
-            deterministic=True
-        )
+        return BackendCapabilities(vectorized=True, simd=True, deterministic=True)
 
     def is_available(self) -> bool:
         """Check if backend is available."""
@@ -224,7 +223,7 @@ class NumPyBackend(Backend):
         # Process in blocks for cache efficiency
         block_size = 1024
         for i in range(0, len(arr), block_size):
-            block = arr[i:i + block_size]
+            block = arr[i : i + block_size]
             for v in block:
                 y = v - compensation
                 t = total + y
@@ -238,14 +237,14 @@ class NumPyBackend(Backend):
         if self._np is None:
             raise RuntimeError("NumPy not available")
         return self._np.add(
-            self._np.asarray(a, dtype=self._np.float64),
-            self._np.asarray(b, dtype=self._np.float64)
+            self._np.asarray(a, dtype=self._np.float64), self._np.asarray(b, dtype=self._np.float64)
         )
 
 
 # =============================================================================
 # CUPY BACKEND (GPU)
 # =============================================================================
+
 
 class CuPyBackend(Backend):
     """CuPy backend for GPU CUDA computation."""
@@ -259,6 +258,7 @@ class CuPyBackend(Backend):
     def _check_available(self) -> None:
         try:
             import cupy
+
             self._cp = cupy
             # Check if a GPU is available
             try:
@@ -284,7 +284,7 @@ class CuPyBackend(Backend):
             vectorized=True,
             gpu=True,
             simd=True,
-            deterministic=False  # GPU may have non-deterministic results
+            deterministic=False,  # GPU may have non-deterministic results
         )
 
     def is_available(self) -> bool:
@@ -295,10 +295,7 @@ class CuPyBackend(Backend):
         """Addition."""
         if self._cp is None:
             raise RuntimeError("CuPy not available")
-        return self._cp.add(
-            self._cp.asarray(a),
-            self._cp.asarray(b)
-        )
+        return self._cp.add(self._cp.asarray(a), self._cp.asarray(b))
 
     def add_many(self, values: Sequence) -> Any:
         """Sum of multiple values."""
@@ -337,6 +334,7 @@ class CuPyBackend(Backend):
 # NUMBA JIT BACKEND
 # =============================================================================
 
+
 class NumbaBackend(Backend):
     """Numba backend with JIT compilation."""
 
@@ -350,6 +348,7 @@ class NumbaBackend(Backend):
     def _check_available(self) -> None:
         try:
             import numba
+
             self._numba = numba
             self._compile_functions()
         except ImportError:
@@ -390,11 +389,7 @@ class NumbaBackend(Backend):
     @property
     def capabilities(self) -> BackendCapabilities:
         """Backend capabilities."""
-        return BackendCapabilities(
-            jit=True,
-            simd=True,
-            deterministic=True
-        )
+        return BackendCapabilities(jit=True, simd=True, deterministic=True)
 
     def is_available(self) -> bool:
         """Check if backend is available."""
@@ -411,6 +406,7 @@ class NumbaBackend(Backend):
         if self._numba is None:
             raise RuntimeError("Numba not available")
         import numpy as np
+
         arr = np.asarray(values, dtype=np.float64)
         return self._jit_kahan(arr)
 
@@ -419,6 +415,7 @@ class NumbaBackend(Backend):
         if self._numba is None:
             raise RuntimeError("Numba not available")
         import numpy as np
+
         arr = np.asarray(values, dtype=np.float64)
         return float(self._jit_kahan(arr))
 
@@ -427,11 +424,13 @@ class NumbaBackend(Backend):
 # DECIMAL BACKEND (précision arbitraire)
 # =============================================================================
 
+
 class DecimalBackend(Backend):
     """Backend Decimal pour précision arbitraire."""
 
     def __init__(self, precision: int = 50):
         from decimal import getcontext
+
         self._precision = precision
         getcontext().prec = precision
 
@@ -443,24 +442,24 @@ class DecimalBackend(Backend):
     @property
     def capabilities(self) -> BackendCapabilities:
         """Backend capabilities."""
-        return BackendCapabilities(
-            arbitrary_precision=True,
-            deterministic=True
-        )
+        return BackendCapabilities(arbitrary_precision=True, deterministic=True)
 
     def add(self, a: Any, b: Any) -> Any:
         """Addition."""
         from decimal import Decimal
+
         return Decimal(str(a)) + Decimal(str(b))
 
     def add_many(self, values: Sequence) -> Any:
         """Sum of multiple values."""
         from decimal import Decimal
+
         return sum(Decimal(str(v)) for v in values)
 
     def kahan_sum(self, values: Sequence) -> float:
         """With Decimal, standard summation is already precise."""
         from decimal import Decimal
+
         return float(sum(Decimal(str(v)) for v in values))
 
 
@@ -522,6 +521,7 @@ def list_available_backends() -> list[str]:
 # BACKEND-AWARE OPERATIONS
 # =============================================================================
 
+
 class BackendDispatcher:
     """Dispatcher that automatically selects the best backend.
 
@@ -536,9 +536,7 @@ class BackendDispatcher:
     def __init__(self, prefer_gpu: bool = False, require_determinism: bool = True):
         self.prefer_gpu = prefer_gpu
         self.require_determinism = require_determinism
-        self._backends = {
-            name: cls() for name, cls in _BACKENDS.items()
-        }
+        self._backends = {name: cls() for name, cls in _BACKENDS.items()}
 
     def select_backend(self, data_size: int, needs_precision: bool = False) -> Backend:
         """Select the best backend for the data."""
@@ -551,8 +549,11 @@ class BackendDispatcher:
             return self._backends["python"]
 
         # GPU preferred and available
-        if (self.prefer_gpu and self._backends["cupy"].is_available() and
-                not self.require_determinism):
+        if (
+            self.prefer_gpu
+            and self._backends["cupy"].is_available()
+            and not self.require_determinism
+        ):
             return self._backends["cupy"]
 
         # Numba si disponible
@@ -570,9 +571,9 @@ class BackendDispatcher:
         """Addition with automatic backend selection."""
         # Determine data size
         size = 1
-        if hasattr(a, '__len__'):
+        if hasattr(a, "__len__"):
             size = max(size, len(a))
-        if hasattr(b, '__len__'):
+        if hasattr(b, "__len__"):
             size = max(size, len(b))
 
         backend = self.select_backend(size, **hints)

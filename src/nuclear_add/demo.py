@@ -14,9 +14,9 @@ import io
 import sys
 
 # Fix encoding for Windows console
-if sys.platform == 'win32':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+if sys.platform == "win32":
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
 
 from decimal import Decimal
 from fractions import Fraction
@@ -55,7 +55,7 @@ def demo_basic_addition():
     section("The famous 0.1 + 0.2 (classic float problem)")
     print(f"Native Python: 0.1 + 0.2 = {0.1 + 0.2}")
     print(f"Nuclear (auto): add(0.1, 0.2) = {add(0.1, 0.2)}")
-    result_decimal = add(0.1, 0.2, precision='decimal')
+    result_decimal = add(0.1, 0.2, precision="decimal")
     print(f"Nuclear (decimal): add(0.1, 0.2, precision='decimal') = {result_decimal}")
 
 
@@ -102,20 +102,20 @@ def demo_nan_handling():
     """Demonstration of NaN handling."""
     banner("4. NaN HANDLING")
 
-    print("Native Python: float('nan') + 1 =", float('nan') + 1, "(propagates!)")
+    print("Native Python: float('nan') + 1 =", float("nan") + 1, "(propagates!)")
 
     section("RAISE mode (default)")
     try:
-        result = add(float('nan'), 1)
+        result = add(float("nan"), 1)
     except ArithmeticError as e:
         print(f"✓ ArithmeticError caught: {e}")
 
     section("PROPAGATE mode")
-    result = add(float('nan'), 1, nan="propagate")
+    result = add(float("nan"), 1, nan="propagate")
     print(f"add(nan, 1, nan='propagate') = {result}")
 
     section("REPLACE mode")
-    result = add(float('nan'), 1, nan="replace")
+    result = add(float("nan"), 1, nan="replace")
     print(f"add(nan, 1, nan='replace') = {result}")
 
 
@@ -157,6 +157,7 @@ def demo_autodiff():
     print(f"f'(3) = {y.dual}  (analytically: 2x + 2 = 8 ✓)")
 
     section("gradient() function")
+
     def f(x: float) -> float:
         return x * x * x  # f(x) = x³
 
@@ -212,6 +213,7 @@ def demo_tracing():
 
     # Some operations that may generate warnings
     import contextlib
+
     with contextlib.suppress(BaseException):
         add(1e308, 1e308, mode="paranoid", overflow="inf")
 
@@ -405,7 +407,8 @@ def demo_error_bounds():
 
 def main():
     """Run all demonstrations."""
-    print("""
+    print(
+        """
 ╔═══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                               ║
 ║     ███╗   ██╗██╗   ██╗ ██████╗██╗     ███████╗ █████╗ ██████╗               ║
@@ -425,7 +428,8 @@ def main():
 ║              The most paranoid addition ever created                          ║
 ║                                                                               ║
 ╚═══════════════════════════════════════════════════════════════════════════════╝
-    """)
+    """
+    )
 
     demos = [
         demo_basic_addition,
@@ -450,13 +454,15 @@ def main():
         except Exception as e:
             print(f"\n⚠️ Error in {demo.__name__}: {e}")
             import traceback
+
             traceback.print_exc()
         print()
 
     print("\n" + "=" * 70)
     print(" 🎉 DEMONSTRATION COMPLETED")
     print("=" * 70)
-    print("""
+    print(
+        """
 This module is intentionally OVERKILL.
 
 It demonstrates that a simple addition can become:
@@ -468,9 +474,9 @@ It demonstrates that a simple addition can become:
 For 99.9% of cases: just use +
 
 For the remaining 0.1%: now you know this exists 😈
-    """)
+    """
+    )
 
 
 if __name__ == "__main__":
     main()
-

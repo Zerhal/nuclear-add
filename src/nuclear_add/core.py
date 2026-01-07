@@ -38,39 +38,40 @@ from .types import DualNumber, Interval, LazyExpr, StochasticValue, TracedValue
 # CONFIGURATION
 # =============================================================================
 
+
 class OverflowPolicy(Enum):
     """Overflow management policy."""
 
-    RAISE = auto()      # Raise an exception
-    INF = auto()        # Return inf
-    SATURATE = auto()   # Saturate to MAX_FLOAT
-    WRAP = auto()       # Wrap around (like integers)
+    RAISE = auto()  # Raise an exception
+    INF = auto()  # Return inf
+    SATURATE = auto()  # Saturate to MAX_FLOAT
+    WRAP = auto()  # Wrap around (like integers)
 
 
 class NaNPolicy(Enum):
     """NaN management policy."""
 
-    RAISE = auto()      # Raise an exception
+    RAISE = auto()  # Raise an exception
     PROPAGATE = auto()  # Propagate NaN
-    REPLACE = auto()    # Replace with default value
+    REPLACE = auto()  # Replace with default value
 
 
 class PrecisionMode(Enum):
     """Precision mode."""
 
-    AUTO = auto()       # Automatic detection
-    FLOAT64 = auto()    # IEEE 754 double precision
-    DECIMAL = auto()    # Arbitrary precision (Decimal)
-    FRACTION = auto()   # Exact (Fraction)
-    INTERVAL = auto()   # Interval arithmetic
+    AUTO = auto()  # Automatic detection
+    FLOAT64 = auto()  # IEEE 754 double precision
+    DECIMAL = auto()  # Arbitrary precision (Decimal)
+    FRACTION = auto()  # Exact (Fraction)
+    INTERVAL = auto()  # Interval arithmetic
 
 
 class MathMode(Enum):
     """Computation mode."""
 
-    STRICT = auto()     # IEEE 754 strict, all checks
-    FAST = auto()       # Optimized, fewer checks
-    PARANOID = auto()   # All checks + tracing
+    STRICT = auto()  # IEEE 754 strict, all checks
+    FAST = auto()  # Optimized, fewer checks
+    PARANOID = auto()  # All checks + tracing
 
 
 @dataclass
@@ -82,26 +83,30 @@ class TypePromotionRules:
     """
 
     # Default hierarchy (from most precise to least precise)
-    hierarchy: list[str] = field(default_factory=lambda: [
-        "Interval",
-        "Decimal",
-        "Fraction",
-        "complex",
-        "float",
-        "int",
-        "bool",
-    ])
+    hierarchy: list[str] = field(
+        default_factory=lambda: [
+            "Interval",
+            "Decimal",
+            "Fraction",
+            "complex",
+            "float",
+            "int",
+            "bool",
+        ]
+    )
 
     # Explicit conversions
-    explicit_rules: dict[tuple[str, str], str] = field(default_factory=lambda: {
-        ("int", "float"): "float",
-        ("int", "Decimal"): "Decimal",
-        ("int", "Fraction"): "Fraction",
-        ("float", "Decimal"): "Decimal",
-        ("float", "Fraction"): "Fraction",  # Controversial, but more precise
-        ("float", "complex"): "complex",
-        ("Decimal", "Fraction"): "Fraction",
-    })
+    explicit_rules: dict[tuple[str, str], str] = field(
+        default_factory=lambda: {
+            ("int", "float"): "float",
+            ("int", "Decimal"): "Decimal",
+            ("int", "Fraction"): "Fraction",
+            ("float", "Decimal"): "Decimal",
+            ("float", "Fraction"): "Fraction",  # Controversial, but more precise
+            ("float", "complex"): "complex",
+            ("Decimal", "Fraction"): "Fraction",
+        }
+    )
 
     def get_target_type(self, type_a: str, type_b: str) -> str:
         """Determine target type for an operation."""
@@ -229,6 +234,7 @@ class NuclearConfig:
 # EXECUTION ENGINE
 # =============================================================================
 
+
 class NuclearEngine:
     """Execution engine for paranoid numerical computation.
 
@@ -261,6 +267,7 @@ class NuclearEngine:
         if self.config.enable_units:
             try:
                 from pint import UnitRegistry
+
                 self._ureg = UnitRegistry()
             except ImportError:
                 pass
@@ -270,6 +277,7 @@ class NuclearEngine:
         if self.config.enable_symbolic_fallback:
             try:
                 import sympy
+
                 self._sympy = sympy
             except ImportError:
                 pass
@@ -280,7 +288,7 @@ class NuclearEngine:
         if self._backend is None:
             self._backend = get_backend(
                 self.config.backend,
-                precision=self.config.decimal_precision if self.config.backend == "decimal" else 50
+                precision=self.config.decimal_precision if self.config.backend == "decimal" else 50,
             )
         return self._backend
 
@@ -301,7 +309,7 @@ class NuclearEngine:
                 "add_start",
                 (a, b),
                 None,
-                message=f"Addition start: {type(a).__name__} + {type(b).__name__}"
+                message=f"Addition start: {type(a).__name__} + {type(b).__name__}",
             )
 
         # Special type handling
@@ -368,6 +376,7 @@ class NuclearEngine:
         # Units (pint)
         if self._ureg is not None:
             from pint import Quantity
+
             if isinstance(a, Quantity) or isinstance(b, Quantity):
                 if not self.config.enable_units:
                     raise TypeError("Units disabled in configuration")
@@ -410,7 +419,7 @@ class NuclearEngine:
                     "type_promotion",
                     (a, b),
                     None,
-                    message=f"Conversion failure to {target_type}: {e}"
+                    message=f"Conversion failure to {target_type}: {e}",
                 )
 
         return a, b
@@ -418,20 +427,26 @@ class NuclearEngine:
     def _check_pre_operation(self, a: Any, b: Any) -> None:
         """Pre-operation checks."""
         # Check overflow risk
-        if (isinstance(a, float) and isinstance(b, float) and
-                OverflowDetector.will_overflow_add(a, b) and
-                self.config.overflow_policy == OverflowPolicy.RAISE):
+        if (
+            isinstance(a, float)
+            and isinstance(b, float)
+            and OverflowDetector.will_overflow_add(a, b)
+            and self.config.overflow_policy == OverflowPolicy.RAISE
+        ):
             raise OverflowError(f"Predicted overflow: {a} + {b}")
-        elif (isinstance(a, float) and isinstance(b, float) and
-              OverflowDetector.will_overflow_add(a, b)):
+        elif (
+            isinstance(a, float)
+            and isinstance(b, float)
+            and OverflowDetector.will_overflow_add(a, b)
+        ):
             self.tracer.log_error(
-                    ErrorType.OVERFLOW,
-                    ErrorSeverity.WARNING,
-                    "add_pre",
-                    (a, b),
-                    None,
-                    message="Predicted overflow"
-                )
+                ErrorType.OVERFLOW,
+                ErrorSeverity.WARNING,
+                "add_pre",
+                (a, b),
+                None,
+                message="Predicted overflow",
+            )
 
     def _compute_add(self, a: Any, b: Any) -> Any:
         """Perform addition."""
@@ -440,7 +455,7 @@ class NuclearEngine:
             return operator.add(a, b)
 
         # Use backend if vectorized
-        if hasattr(a, '__len__') and self.config.vectorize:
+        if hasattr(a, "__len__") and self.config.vectorize:
             return self.backend.add(a, b)
 
         # Standard addition
@@ -460,36 +475,29 @@ class NuclearEngine:
                 result = 0.0
 
             self.tracer.log_error(
-                ErrorType.NAN_PRODUCED,
-                ErrorSeverity.ERROR,
-                "add",
-                (a, b),
-                result
+                ErrorType.NAN_PRODUCED, ErrorSeverity.ERROR, "add", (a, b), result
             )
 
         # Check overflow
-        if isinstance(result, float) and math.isinf(result) and \
-           not (isinstance(a, float) and math.isinf(a)) and \
-           not (isinstance(b, float) and math.isinf(b)):
+        if (
+            isinstance(result, float)
+            and math.isinf(result)
+            and not (isinstance(a, float) and math.isinf(a))
+            and not (isinstance(b, float) and math.isinf(b))
+        ):
             if self.config.overflow_policy == OverflowPolicy.RAISE:
                 raise OverflowError(f"Overflow: {a} + {b} = inf")
             elif self.config.overflow_policy == OverflowPolicy.SATURATE:
                 result = math.copysign(1.7976931348623157e308, result)
 
-            self.tracer.log_error(
-                ErrorType.OVERFLOW,
-                ErrorSeverity.ERROR,
-                "add",
-                (a, b),
-                result
-            )
+            self.tracer.log_error(ErrorType.OVERFLOW, ErrorSeverity.ERROR, "add", (a, b), result)
 
         # Check precision (paranoid mode)
         if self.config.math_mode == MathMode.PARANOID:
             event = self._precision_analyzer.check_addition(
                 float(a) if isinstance(a, Real) else 0,
                 float(b) if isinstance(b, Real) else 0,
-                float(result) if isinstance(result, Real) else 0
+                float(result) if isinstance(result, Real) else 0,
             )
             if event:
                 self.tracer.log(event)
@@ -554,10 +562,7 @@ class NuclearEngine:
         if self._sympy is None:
             raise RuntimeError("SymPy not available")
 
-        return self._sympy.Add(
-            self._sympy.sympify(a),
-            self._sympy.sympify(b)
-        )
+        return self._sympy.Add(self._sympy.sympify(a), self._sympy.sympify(b))
 
 
 # =============================================================================
@@ -583,7 +588,7 @@ def set_engine(engine: NuclearEngine) -> None:
 
 
 # Type hints pour les overloads
-T = TypeVar('T', bound=Number)
+T = TypeVar("T", bound=Number)
 
 
 @overload
@@ -611,21 +616,17 @@ def add(
     # Mode
     mode: Literal["strict", "fast", "paranoid"] = "strict",
     precision: Literal["auto", "float64", "decimal", "fraction", "interval"] = "auto",
-
     # Policies
     overflow: Literal["raise", "inf", "saturate", "wrap"] = "raise",
     nan: Literal["raise", "propagate", "replace"] = "raise",
-
     # Options
     vectorize: bool = True,
     units: bool = True,
     trace: bool = True,
     kahan: bool = True,
-
     # Advanced
     stochastic: bool = False,
     symbolic_fallback: bool = False,
-
     # Custom configuration
     config: NuclearConfig | None = None,
     engine: NuclearEngine | None = None,
@@ -736,18 +737,19 @@ def add(
 
 def _is_sequence(x: Any) -> bool:
     """Check if x is a sequence (not str/bytes)."""
-    return hasattr(x, '__iter__') and not isinstance(x, (str, bytes))
+    return hasattr(x, "__iter__") and not isinstance(x, (str, bytes))
 
 
 # =============================================================================
 # UTILITY FUNCTIONS
 # =============================================================================
 
+
 def sum_safe(
     values: Sequence,
     *,
     precision: Literal["auto", "kahan", "pairwise", "neumaier"] = "kahan",
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Any:
     """Safe sum of multiple values.
 
@@ -763,9 +765,11 @@ def sum_safe(
         return engine.backend.kahan_sum(values)
     elif precision == "pairwise":
         from .backends import PythonBackend
+
         return PythonBackend().pairwise_sum(list(values))
     elif precision == "neumaier":
         from .backends import PythonBackend
+
         return PythonBackend().neumaier_sum(list(values))
     else:
         return engine.add_many(values)

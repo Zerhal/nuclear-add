@@ -1,6 +1,5 @@
 """Tests for tracing system."""
 
-
 from nuclear_add.tracing import (
     ErrorEvent,
     ErrorSeverity,
@@ -43,7 +42,7 @@ class TestNumericTracer:
             ErrorSeverity.ERROR,
             "add",
             (1e308, 1e308),
-            float('inf'),
+            float("inf"),
         )
         assert len(tracer.events) == 1
         assert tracer.events[0].error_type == ErrorType.OVERFLOW
@@ -115,14 +114,14 @@ class TestPrecisionAnalyzer:
     def test_check_addition_nan(self):
         """Test checking addition with NaN."""
         analyzer = PrecisionAnalyzer()
-        event = analyzer.check_addition(0.1, 0.2, float('nan'))
+        event = analyzer.check_addition(0.1, 0.2, float("nan"))
         assert event is not None
         assert event.error_type == ErrorType.NAN_PRODUCED
 
     def test_check_addition_overflow(self):
         """Test checking addition with overflow."""
         analyzer = PrecisionAnalyzer()
-        event = analyzer.check_addition(1e308, 1e308, float('inf'))
+        event = analyzer.check_addition(1e308, 1e308, float("inf"))
         assert event is not None
         assert event.error_type == ErrorType.OVERFLOW
 
@@ -168,4 +167,3 @@ class TestGlobalTracer:
         set_global_tracer(new_tracer)
         retrieved = get_global_tracer()
         assert retrieved is new_tracer
-

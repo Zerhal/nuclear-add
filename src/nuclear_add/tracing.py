@@ -21,27 +21,27 @@ from typing import Any
 class ErrorSeverity(Enum):
     """Severity level of numerical errors."""
 
-    DEBUG = auto()      # Debug information
-    INFO = auto()       # Normal information
-    WARNING = auto()    # Minor precision loss
-    ERROR = auto()      # Significant error (overflow, NaN)
-    CRITICAL = auto()   # Critical error (unusable result)
+    DEBUG = auto()  # Debug information
+    INFO = auto()  # Normal information
+    WARNING = auto()  # Minor precision loss
+    ERROR = auto()  # Significant error (overflow, NaN)
+    CRITICAL = auto()  # Critical error (unusable result)
 
 
 class ErrorType(Enum):
     """Types of numerical errors."""
 
-    PRECISION_LOSS = auto()      # Precision loss
-    OVERFLOW = auto()            # Overflow
-    UNDERFLOW = auto()           # Underflow
-    NAN_PRODUCED = auto()        # Generated NaN
-    INF_PRODUCED = auto()        # Generated infinity
-    DENORMAL = auto()            # Denormal number
-    CANCELLATION = auto()        # Catastrophic cancellation
-    TYPE_COERCION = auto()       # Implicit type conversion
-    ROUNDING = auto()            # Significant rounding error
-    DIVISION_BY_ZERO = auto()    # Division by zero
-    DOMAIN_ERROR = auto()        # Domain error (e.g., sqrt(-1))
+    PRECISION_LOSS = auto()  # Precision loss
+    OVERFLOW = auto()  # Overflow
+    UNDERFLOW = auto()  # Underflow
+    NAN_PRODUCED = auto()  # Generated NaN
+    INF_PRODUCED = auto()  # Generated infinity
+    DENORMAL = auto()  # Denormal number
+    CANCELLATION = auto()  # Catastrophic cancellation
+    TYPE_COERCION = auto()  # Implicit type conversion
+    ROUNDING = auto()  # Significant rounding error
+    DIVISION_BY_ZERO = auto()  # Division by zero
+    DOMAIN_ERROR = auto()  # Domain error (e.g., sqrt(-1))
 
 
 @dataclass
@@ -106,7 +106,7 @@ class NumericTracer:
         enabled: bool = True,
         min_severity: ErrorSeverity = ErrorSeverity.WARNING,
         capture_stack: bool = True,
-        max_events: int = 10000
+        max_events: int = 10000,
     ):
         self.enabled = enabled
         self.min_severity = min_severity
@@ -142,6 +142,7 @@ class NumericTracer:
 
             # Notify callbacks
             import contextlib
+
             for callback in self._callbacks:
                 with contextlib.suppress(Exception):
                     callback(event)
@@ -153,7 +154,7 @@ class NumericTracer:
         operation: str,
         operands: tuple,
         result: Any,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Shortcut to create and log an event."""
         event = ErrorEvent(
@@ -162,7 +163,7 @@ class NumericTracer:
             operation=operation,
             operands=operands,
             result=result,
-            **kwargs
+            **kwargs,
         )
         self.log(event)
 
@@ -250,6 +251,7 @@ class NumericTracer:
 # SPECIALIZED ANALYZERS
 # =============================================================================
 
+
 class PrecisionAnalyzer:
     """Analyzes precision loss in computations.
 
@@ -277,8 +279,8 @@ class PrecisionAnalyzer:
 
         def float_to_int(f: float) -> int:
             """Convert float to its integer representation."""
-            packed = struct.pack('d', f)
-            return struct.unpack('q', packed)[0]
+            packed = struct.pack("d", f)
+            return struct.unpack("q", packed)[0]
 
         ia, ib = float_to_int(a), float_to_int(b)
 
@@ -298,7 +300,7 @@ class PrecisionAnalyzer:
                 operation="add",
                 operands=(a, b),
                 result=result,
-                message="NaN produced by addition"
+                message="NaN produced by addition",
             )
 
         if math.isinf(result) and not (math.isinf(a) or math.isinf(b)):
@@ -308,7 +310,7 @@ class PrecisionAnalyzer:
                 operation="add",
                 operands=(a, b),
                 result=result,
-                message="Overflow in addition"
+                message="Overflow in addition",
             )
 
         # Check catastrophic cancellation
@@ -326,7 +328,7 @@ class PrecisionAnalyzer:
                         operands=(a, b),
                         result=result,
                         message=f"Catastrophic cancellation: ~{lost_digits:.0f} digits lost",
-                        context={"lost_digits": lost_digits}
+                        context={"lost_digits": lost_digits},
                     )
 
         return None
@@ -340,16 +342,18 @@ class PrecisionAnalyzer:
         ulp_diff = self.ulp_distance(result, kahan_result)
 
         if ulp_diff > 10:
-            events.append(ErrorEvent(
-                error_type=ErrorType.PRECISION_LOSS,
-                severity=ErrorSeverity.WARNING if ulp_diff < 100 else ErrorSeverity.ERROR,
-                operation="sum",
-                operands=(f"[{len(values)} values]",),
-                result=result,
-                expected=kahan_result,
-                message=f"Difference of {ulp_diff} ULP with compensated sum",
-                context={"ulp_difference": ulp_diff}
-            ))
+            events.append(
+                ErrorEvent(
+                    error_type=ErrorType.PRECISION_LOSS,
+                    severity=ErrorSeverity.WARNING if ulp_diff < 100 else ErrorSeverity.ERROR,
+                    operation="sum",
+                    operands=(f"[{len(values)} values]",),
+                    result=result,
+                    expected=kahan_result,
+                    message=f"Difference of {ulp_diff} ULP with compensated sum",
+                    context={"ulp_difference": ulp_diff},
+                )
+            )
 
         return events
 
@@ -380,9 +384,9 @@ class OverflowDetector:
             return False  # Already inf, no additional overflow
 
         # Check if same sign
-        if (a > 0 and b > 0):
+        if a > 0 and b > 0:
             return a > cls.MAX_FLOAT - b
-        elif (a < 0 and b < 0):
+        elif a < 0 and b < 0:
             return a < -cls.MAX_FLOAT - b
 
         return False
@@ -402,7 +406,7 @@ class OverflowDetector:
 
         """
         if cls.will_overflow_add(a, b):
-            return float('inf') if (a > 0) else float('-inf'), "OVERFLOW_PREDICTED"
+            return float("inf") if (a > 0) else float("-inf"), "OVERFLOW_PREDICTED"
 
         result = a + b
 

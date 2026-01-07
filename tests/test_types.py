@@ -1,6 +1,5 @@
 """Tests for advanced types."""
 
-
 import pytest
 
 from nuclear_add.types import (
@@ -130,4 +129,3 @@ class TestStochasticValue:
         """Test stochastic rounding."""
         sv = StochasticValue(0.123456789, _rng_seed=42)
         assert isinstance(sv.value, float)
-

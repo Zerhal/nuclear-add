@@ -102,4 +102,3 @@ class TestBackendCapabilities:
         assert caps.jit is False
         assert caps.arbitrary_precision is False
         assert caps.simd is False
-

@@ -70,4 +70,3 @@ __all__ = [
     "ErrorType",
     "ErrorSeverity",
 ]
-

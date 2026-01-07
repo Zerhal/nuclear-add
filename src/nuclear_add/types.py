@@ -13,6 +13,7 @@ from typing import Any
 # INTERVAL ARITHMETIC - Formal error bounds
 # =============================================================================
 
+
 @dataclass(frozen=True, slots=True)
 class Interval:
     """Interval arithmetic for computation with uncertainty.
@@ -35,8 +36,8 @@ class Interval:
     def __post_init__(self) -> None:
         """Validate and fix interval bounds."""
         if self.low > self.high:
-            object.__setattr__(self, 'low', self.high)
-            object.__setattr__(self, 'high', self.low)
+            object.__setattr__(self, "low", self.high)
+            object.__setattr__(self, "high", self.low)
 
     @classmethod
     def from_value(cls, value: float, ulp_error: int = 1) -> Interval:
@@ -72,7 +73,7 @@ class Interval:
         """Relative error (if midpoint != 0)."""
         mid = self.midpoint
         if mid == 0:
-            return float('inf') if self.width > 0 else 0.0
+            return float("inf") if self.width > 0 else 0.0
         return self.radius / abs(mid)
 
     def __contains__(self, value: float) -> bool:
@@ -113,10 +114,10 @@ class Interval:
     def __truediv__(self, other: Interval | float) -> Interval:
         if isinstance(other, Interval):
             if other.low <= 0 <= other.high:
-                return Interval(float('-inf'), float('inf'))
+                return Interval(float("-inf"), float("inf"))
             return self * Interval(1 / other.high, 1 / other.low)
         if other == 0:
-            return Interval(float('-inf'), float('inf'))
+            return Interval(float("-inf"), float("inf"))
         return self * (1 / other)
 
     def __neg__(self) -> Interval:
@@ -144,15 +145,13 @@ class Interval:
         """Square root of interval."""
         if self.high < 0:
             raise ValueError("Square root of negative interval")
-        return Interval(
-            math.sqrt(max(0, self.low)),
-            math.sqrt(self.high)
-        )
+        return Interval(math.sqrt(max(0, self.low)), math.sqrt(self.high))
 
 
 # =============================================================================
 # DUAL NUMBERS - Automatic differentiation (Forward mode)
 # =============================================================================
+
 
 @dataclass(slots=True)
 class DualNumber:
@@ -205,8 +204,7 @@ class DualNumber:
         if isinstance(other, DualNumber):
             # (a + bε)(c + dε) = ac + (ad + bc)ε
             return DualNumber(
-                self.real * other.real,
-                self.real * other.dual + self.dual * other.real
+                self.real * other.real, self.real * other.dual + self.dual * other.real
             )
         return DualNumber(self.real * other, self.dual * other)
 
@@ -218,16 +216,13 @@ class DualNumber:
             # (a + bε)/(c + dε) = a/c + (bc - ad)/c² ε
             return DualNumber(
                 self.real / other.real,
-                (self.dual * other.real - self.real * other.dual) / (other.real ** 2)
+                (self.dual * other.real - self.real * other.dual) / (other.real**2),
             )
         return DualNumber(self.real / other, self.dual / other)
 
     def __rtruediv__(self, other: float) -> DualNumber:
         # other / self = other / (a + bε) = other/a - other*b/a² ε
-        return DualNumber(
-            other / self.real,
-            -other * self.dual / (self.real ** 2)
-        )
+        return DualNumber(other / self.real, -other * self.dual / (self.real**2))
 
     def __pow__(self, n: int | float | DualNumber) -> DualNumber:
         if isinstance(n, DualNumber):
@@ -237,10 +232,7 @@ class DualNumber:
             ln_self = DualNumber(math.log(self.real), self.dual / self.real)
             return (n * ln_self).exp()
             # x^n where n is constant
-        return DualNumber(
-            self.real ** n,
-            n * (self.real ** (n - 1)) * self.dual
-        )
+        return DualNumber(self.real**n, n * (self.real ** (n - 1)) * self.dual)
 
     def __neg__(self) -> DualNumber:
         return DualNumber(-self.real, -self.dual)
@@ -287,6 +279,7 @@ class DualNumber:
 # TRACED VALUE - Value with complete history
 # =============================================================================
 
+
 @dataclass
 class TracedValue:
     """Value with complete operation traceability.
@@ -306,12 +299,14 @@ class TracedValue:
         """Record an operation."""
         other_val = other.value if isinstance(other, TracedValue) else other
         new_trace = self.trace.copy()
-        new_trace.append({
-            "operation": op,
-            "operands": (self.value, other_val),
-            "result": result,
-            "source_ids": (self.id, other.id if isinstance(other, TracedValue) else None),
-        })
+        new_trace.append(
+            {
+                "operation": op,
+                "operands": (self.value, other_val),
+                "result": result,
+                "source_ids": (self.id, other.id if isinstance(other, TracedValue) else None),
+            }
+        )
         return TracedValue(result, new_trace)
 
     def __add__(self, other: TracedValue | Any) -> TracedValue:
@@ -344,10 +339,10 @@ class TracedValue:
         """Return the complete formatted trace."""
         lines = [f"TracedValue[{self.id}] = {self.value}"]
         for i, entry in enumerate(self.trace):
-            op0 = entry['operands'][0]
-            op1 = entry['operands'][1]
-            op_name = entry['operation']
-            result = entry['result']
+            op0 = entry["operands"][0]
+            op1 = entry["operands"][1]
+            op_name = entry["operation"]
+            result = entry["result"]
             lines.append(f"  [{i}] {op0} {op_name} {op1} = {result}")
         return "\n".join(lines)
 
@@ -355,6 +350,7 @@ class TracedValue:
 # =============================================================================
 # LAZY EXPRESSION - Deferred evaluation and computation graph
 # =============================================================================
+
 
 class LazyExpr:
     """Lazy expression for computation graph construction.
@@ -375,14 +371,10 @@ class LazyExpr:
 
     """
 
-    __slots__ = ('op', 'args', 'value', 'name', '_cached_result')
+    __slots__ = ("op", "args", "value", "name", "_cached_result")
 
     def __init__(
-        self,
-        op: str,
-        args: tuple[Any, ...],
-        value: float | None = None,
-        name: str | None = None
+        self, op: str, args: tuple[Any, ...], value: float | None = None, name: str | None = None
     ) -> None:
         """Initialize a lazy expression.
 
@@ -483,10 +475,7 @@ class LazyExpr:
             return self.value
 
         # Recursively evaluate arguments
-        evaluated_args = [
-            arg.eval() if isinstance(arg, LazyExpr) else arg
-            for arg in self.args
-        ]
+        evaluated_args = [arg.eval() if isinstance(arg, LazyExpr) else arg for arg in self.args]
 
         # Binary operations
         if self.op == "add":
@@ -622,6 +611,7 @@ class LazyExpr:
 # STOCHASTIC VALUE - For stochastic rounding
 # =============================================================================
 
+
 @dataclass
 class StochasticValue:
     """Value with stochastic rounding.
@@ -640,6 +630,7 @@ class StochasticValue:
     def __post_init__(self) -> None:
         """Initialize random seed if provided."""
         import random
+
         if self._rng_seed is not None:
             random.seed(self._rng_seed)
 
@@ -652,6 +643,7 @@ class StochasticValue:
         - P(round up) = v - floor(v)
         """
         import random
+
         if seed is not None:
             random.seed(seed)
 
@@ -691,13 +683,5 @@ class StochasticValue:
 
 # Type aliases for clarity
 Numeric = (
-    int
-    | float
-    | Decimal
-    | Fraction
-    | complex
-    | Interval
-    | DualNumber
-    | TracedValue
-    | LazyExpr
+    int | float | Decimal | Fraction | complex | Interval | DualNumber | TracedValue | LazyExpr
 )
