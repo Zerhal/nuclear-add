@@ -162,7 +162,7 @@ def demo_autodiff() -> None:
         return x * x * x  # f(x) = x³
 
     def f_dual(x_dual: DualNumber) -> DualNumber:
-        """Wrapper for gradient computation."""
+        """Wrap function for gradient computation."""
         return x_dual * x_dual * x_dual
 
     grad = gradient(f_dual, 2.0)  # f'(2) = 3x² = 12
