@@ -472,7 +472,9 @@ class LazyExpr:
     def _eval_impl(self) -> float:
         """Implement expression evaluation."""
         if self.op == "var" or self.op == "const":
-            return self.value
+            if self.value is None:
+                raise ValueError(f"Value not set for {self.op} expression")
+            return float(self.value)
 
         # Recursively evaluate arguments
         evaluated_args = [arg.eval() if isinstance(arg, LazyExpr) else arg for arg in self.args]
@@ -487,7 +489,7 @@ class LazyExpr:
         elif self.op == "div":
             return evaluated_args[0] / evaluated_args[1]
         elif self.op == "pow":
-            return evaluated_args[0] ** evaluated_args[1]
+            return float(evaluated_args[0] ** evaluated_args[1])
 
         # Unary operations
         elif self.op == "neg":
@@ -502,7 +504,7 @@ class LazyExpr:
             return math.sin(evaluated_args[0])
         elif self.op == "cos":
             return math.cos(evaluated_args[0])
-
+        else:
             raise ValueError(f"Unknown operation: {self.op}")
 
     def grad(self, var_name: str) -> LazyExpr:
@@ -521,47 +523,61 @@ class LazyExpr:
 
         # Differentiation rules
         if self.op == "add":
-            return self.args[0]._grad_impl(var_name) + self.args[1]._grad_impl(var_name)
+            result: LazyExpr = self.args[0]._grad_impl(var_name) + self.args[1]._grad_impl(var_name)
+            return result
         elif self.op == "sub":
-            return self.args[0]._grad_impl(var_name) - self.args[1]._grad_impl(var_name)
+            result = self.args[0]._grad_impl(var_name) - self.args[1]._grad_impl(var_name)
+            return result
         elif self.op == "mul":
             # Product rule: (fg)' = f'g + fg'
             f, g = self.args
-            return f._grad_impl(var_name) * g + f * g._grad_impl(var_name)
+            result = f._grad_impl(var_name) * g + f * g._grad_impl(var_name)
+            return result
         elif self.op == "div":
             # Quotient rule: (f/g)' = (f'g - fg') / g²
             f, g = self.args
-            return (f._grad_impl(var_name) * g - f * g._grad_impl(var_name)) / (g * g)
+            result = (f._grad_impl(var_name) * g - f * g._grad_impl(var_name)) / (g * g)
+            return result
         elif self.op == "pow":
             # Simple case: x^n where n is constant
             base, exp = self.args
             if exp.op == "const":
                 n = exp.value
+                if n is None:
+                    raise ValueError("Constant value not set")
                 grad_base = base._grad_impl(var_name)
                 power_term = base ** LazyExpr.const(n - 1)
-                return LazyExpr.const(n) * power_term * grad_base
+                result = LazyExpr.const(n) * power_term * grad_base
+                return result
             # General case: x^y = exp(y * ln(x))
             exp_grad = exp._grad_impl(var_name)
             base_grad = base._grad_impl(var_name)
             log_term = exp_grad * base.log()
             div_term = exp * base_grad / base
-            return self * (log_term + div_term)
+            result = self * (log_term + div_term)
+            return result
         elif self.op == "neg":
-            return -self.args[0]._grad_impl(var_name)
+            result = -self.args[0]._grad_impl(var_name)
+            return result
         elif self.op == "sqrt":
             # (√x)' = 1/(2√x)
-            return self.args[0]._grad_impl(var_name) / (LazyExpr.const(2.0) * self)
+            result = self.args[0]._grad_impl(var_name) / (LazyExpr.const(2.0) * self)
+            return result
         elif self.op == "exp":
             # (e^x)' = e^x
-            return self * self.args[0]._grad_impl(var_name)
+            result = self * self.args[0]._grad_impl(var_name)
+            return result
         elif self.op == "log":
             # (ln x)' = 1/x
-            return self.args[0]._grad_impl(var_name) / self.args[0]
+            result = self.args[0]._grad_impl(var_name) / self.args[0]
+            return result
         elif self.op == "sin":
-            return self.args[0].cos() * self.args[0]._grad_impl(var_name)
+            result = self.args[0].cos() * self.args[0]._grad_impl(var_name)
+            return result
         elif self.op == "cos":
-            return -self.args[0].sin() * self.args[0]._grad_impl(var_name)
-
+            result = -self.args[0].sin() * self.args[0]._grad_impl(var_name)
+            return result
+        else:
             raise ValueError(f"Gradient not implemented for: {self.op}")
 
     def to_graph(self) -> str:

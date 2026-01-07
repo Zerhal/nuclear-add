@@ -40,7 +40,7 @@ def section(title: str) -> None:
     print(f"\n--- {title} ---")
 
 
-def demo_basic_addition():
+def demo_basic_addition() -> None:
     """Demonstration of basic additions."""
     banner("1. BASIC ADDITIONS")
 
@@ -59,7 +59,7 @@ def demo_basic_addition():
     print(f"Nuclear (decimal): add(0.1, 0.2, precision='decimal') = {result_decimal}")
 
 
-def demo_precision_modes():
+def demo_precision_modes() -> None:
     """Demonstration of precision modes."""
     banner("2. PRECISION MODES")
 
@@ -68,15 +68,15 @@ def demo_precision_modes():
     print(f"add(Decimal('0.1'), Decimal('0.2')) = {result}")
 
     section("Fraction (exact)")
-    result = add(Fraction(1, 3), Fraction(1, 6))
-    print(f"add(Fraction(1/3), Fraction(1/6)) = {result}")
+    result_fraction = add(Fraction(1, 3), Fraction(1, 6))
+    print(f"add(Fraction(1/3), Fraction(1/6)) = {result_fraction}")
 
     section("Force precision mode")
-    result = add(0.1, 0.2, precision="fraction")
-    print(f"add(0.1, 0.2, precision='fraction') = {result}")
+    result_complex = add(0.1, 0.2, precision="fraction")
+    print(f"add(0.1, 0.2, precision='fraction') = {result_complex}")
 
 
-def demo_overflow_handling():
+def demo_overflow_handling() -> None:
     """Demonstration of overflow handling."""
     banner("3. OVERFLOW HANDLING")
 
@@ -98,7 +98,7 @@ def demo_overflow_handling():
     print(f"add(1e308, 1e308, overflow='saturate') = {result}")
 
 
-def demo_nan_handling():
+def demo_nan_handling() -> None:
     """Demonstration of NaN handling."""
     banner("4. NaN HANDLING")
 
@@ -119,7 +119,7 @@ def demo_nan_handling():
     print(f"add(nan, 1, nan='replace') = {result}")
 
 
-def demo_interval_arithmetic():
+def demo_interval_arithmetic() -> None:
     """Demonstration of interval arithmetic."""
     banner("5. INTERVAL ARITHMETIC")
 
@@ -143,7 +143,7 @@ def demo_interval_arithmetic():
     print(f"Uncertainty adds up: width = {z.width}")
 
 
-def demo_autodiff():
+def demo_autodiff() -> None:
     """Demonstration of automatic differentiation."""
     banner("6. AUTOMATIC DIFFERENTIATION")
 
@@ -161,7 +161,11 @@ def demo_autodiff():
     def f(x: float) -> float:
         return x * x * x  # f(x) = x³
 
-    grad = gradient(f, 2.0)  # f'(2) = 3x² = 12
+    def f_dual(x_dual: DualNumber) -> DualNumber:
+        """Wrapper for gradient computation."""
+        return x_dual * x_dual * x_dual
+
+    grad = gradient(f_dual, 2.0)  # f'(2) = 3x² = 12
     print("f(x) = x³")
     print(f"f'(2) = {grad}  (analytically: 3×2² = 12 ✓)")
 
@@ -173,7 +177,7 @@ def demo_autodiff():
     print(f"f'(1) = {result.dual:.6f}  (analytically: x/√(x²+1) = 1/√2 ≈ 0.707 ✓)")
 
 
-def demo_lazy_evaluation():
+def demo_lazy_evaluation() -> None:
     """Demonstration of lazy evaluation."""
     banner("7. LAZY EVALUATION & COMPUTATION GRAPHS")
 
@@ -199,7 +203,7 @@ def demo_lazy_evaluation():
     print(simple.to_graph())
 
 
-def demo_tracing():
+def demo_tracing() -> None:
     """Demonstration of tracing system."""
     banner("8. NUMERIC ERROR TRACING")
 
@@ -226,7 +230,7 @@ def demo_tracing():
         print(f"  • {event}")
 
 
-def demo_kahan_summation():
+def demo_kahan_summation() -> None:
     """Demonstration of Kahan summation."""
     banner("9. KAHAN SUMMATION (MAXIMUM PRECISION)")
 
@@ -260,7 +264,7 @@ def demo_kahan_summation():
     print(f"  Pairwise: {result_pairwise}")
 
 
-def demo_traced_values():
+def demo_traced_values() -> None:
     """Demonstration of traced values."""
     banner("10. VALUES WITH COMPLETE HISTORY")
 
@@ -282,7 +286,7 @@ def demo_traced_values():
     print(e.get_full_trace())
 
 
-def demo_vectorization():
+def demo_vectorization() -> None:
     """Demonstration of vectorization."""
     banner("11. VECTORIZATION")
 
@@ -291,15 +295,15 @@ def demo_vectorization():
     print(f"add([1, 2, 3], [4, 5, 6]) = {list(result)}")
 
     section("Vector + scalar addition (broadcasting)")
-    result = add([1, 2, 3], 10)
-    print(f"add([1, 2, 3], 10) = {list(result)}")
+    result_list = add([1, 2, 3], 10)  # type: ignore[call-overload]
+    print(f"add([1, 2, 3], 10) = {list(result_list)}")
 
     section("Tuples")
     result = add((1.5, 2.5), (3.5, 4.5))
     print(f"add((1.5, 2.5), (3.5, 4.5)) = {tuple(result)}")
 
 
-def demo_backends():
+def demo_backends() -> None:
     """Demonstration of different backends."""
     banner("12. COMPUTATION BACKENDS")
 
@@ -333,7 +337,7 @@ def demo_backends():
     print(f"Python backend, Kahan sum of 100×0.1 = {result}")
 
 
-def demo_stochastic_rounding():
+def demo_stochastic_rounding() -> None:
     """Demonstration of stochastic rounding."""
     banner("13. STOCHASTIC ROUNDING")
 
@@ -353,7 +357,7 @@ def demo_stochastic_rounding():
         print(f"  seed={i}: {r}")
 
 
-def demo_config_presets():
+def demo_config_presets() -> None:
     """Demonstration of configuration presets."""
     banner("14. CONFIGURATION PRESETS")
 
@@ -381,7 +385,7 @@ def demo_config_presets():
     print(f"  Decimal precision: {config.decimal_precision} digits")
 
 
-def demo_error_bounds():
+def demo_error_bounds() -> None:
     """Demonstration of formal error bounds."""
     banner("15. FORMAL ERROR BOUNDS")
 
@@ -405,7 +409,7 @@ def demo_error_bounds():
     print(f"  Is 2.0 in interval? {2.0 in a}")
 
 
-def main():
+def main() -> None:
     """Run all demonstrations."""
     print(
         """

@@ -160,9 +160,9 @@ class PythonBackend(Backend):
 class NumPyBackend(Backend):
     """NumPy backend with SIMD optimizations."""
 
-    _np = None
+    _np: Any = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._check_available()
 
     def _check_available(self) -> None:
@@ -249,10 +249,10 @@ class NumPyBackend(Backend):
 class CuPyBackend(Backend):
     """CuPy backend for GPU CUDA computation."""
 
-    _cp = None
+    _cp: Any = None
     _device_info: str | None = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._check_available()
 
     def _check_available(self) -> None:
@@ -338,11 +338,11 @@ class CuPyBackend(Backend):
 class NumbaBackend(Backend):
     """Numba backend with JIT compilation."""
 
-    _numba = None
-    _jit_add: Callable | None = None
-    _jit_kahan: Callable | None = None
+    _numba: Any = None
+    _jit_add: Callable[[float, float], float] | None = None
+    _jit_kahan: Callable[[Any], float] | None = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._check_available()
 
     def _check_available(self) -> None:
@@ -397,13 +397,13 @@ class NumbaBackend(Backend):
 
     def add(self, a: Any, b: Any) -> Any:
         """Addition."""
-        if self._numba is None:
+        if self._numba is None or self._jit_add is None:
             raise RuntimeError("Numba not available")
         return self._jit_add(float(a), float(b))
 
     def add_many(self, values: Sequence) -> Any:
         """Sum of multiple values."""
-        if self._numba is None:
+        if self._numba is None or self._jit_kahan is None:
             raise RuntimeError("Numba not available")
         import numpy as np
 
@@ -412,7 +412,7 @@ class NumbaBackend(Backend):
 
     def kahan_sum(self, values: Sequence) -> float:
         """Compensated Kahan sum."""
-        if self._numba is None:
+        if self._numba is None or self._jit_kahan is None:
             raise RuntimeError("Numba not available")
         import numpy as np
 

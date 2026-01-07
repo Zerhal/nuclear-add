@@ -136,7 +136,7 @@ class NumericTracer:
 
             # Capture stack trace if requested
             if self.capture_stack and not event.stack_trace:
-                event.stack_trace = traceback.format_stack()[-5:-1]
+                event.stack_trace = "\n".join(traceback.format_stack()[-5:-1])
 
             self._events.append(event)
 
@@ -168,7 +168,7 @@ class NumericTracer:
         self.log(event)
 
     @contextmanager
-    def trace(self, context: dict[str, Any] | None = None):
+    def trace(self, context: dict[str, Any] | None = None) -> Any:
         """Context manager to trace a code block."""
         if context:
             self._context_stack.append(context)
@@ -214,7 +214,7 @@ class NumericTracer:
             return {"total_events": 0, "message": "No errors detected"}
 
         # Group by type
-        by_type = {}
+        by_type: dict[str, list[ErrorEvent]] = {}
         for event in events:
             type_name = event.error_type.name
             if type_name not in by_type:
@@ -222,7 +222,7 @@ class NumericTracer:
             by_type[type_name].append(event)
 
         # Group by severity
-        by_severity = {}
+        by_severity: dict[str, int] = {}
         for event in events:
             sev_name = event.severity.name
             by_severity[sev_name] = by_severity.get(sev_name, 0) + 1
@@ -280,7 +280,8 @@ class PrecisionAnalyzer:
         def float_to_int(f: float) -> int:
             """Convert float to its integer representation."""
             packed = struct.pack("d", f)
-            return struct.unpack("q", packed)[0]
+            result = struct.unpack("q", packed)[0]
+            return int(result)
 
         ia, ib = float_to_int(a), float_to_int(b)
 
@@ -441,7 +442,7 @@ def set_global_tracer(tracer: NumericTracer) -> None:
 
 
 @contextmanager
-def trace_context(**context: Any):
+def trace_context(**context: Any) -> Any:
     """Context manager to add context to tracing."""
     tracer = get_global_tracer()
     with tracer.trace(context):

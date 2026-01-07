@@ -183,7 +183,7 @@ class NuclearConfig:
     stochastic_rounding: bool = False
     stochastic_seed: int | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Initialize configuration dependencies."""
         if self.precision_mode == PrecisionMode.DECIMAL:
             getcontext().prec = self.decimal_precision
@@ -609,7 +609,7 @@ def add(a: Sequence, b: Sequence, **kwargs: Any) -> Sequence: ...
 def add(a: T, b: T, **kwargs: Any) -> T: ...
 
 
-def add(
+def add(  # type: ignore[misc]
     a: Any,
     b: Any,
     *,
@@ -787,7 +787,7 @@ def add_with_error(a: float, b: float) -> tuple[float, Interval]:
     return result, interval
 
 
-def gradient(f: Callable[[float], float], x: float) -> float:
+def gradient(f: Callable[[DualNumber], DualNumber], x: float) -> float:
     """Compute gradient of f at x by automatic differentiation.
 
     Args:
@@ -800,4 +800,6 @@ def gradient(f: Callable[[float], float], x: float) -> float:
     """
     dual_x = DualNumber.variable(x)
     result = f(dual_x)
+    if not isinstance(result, DualNumber):
+        raise TypeError("Function must return a DualNumber")
     return result.dual
