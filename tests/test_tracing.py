@@ -1,14 +1,13 @@
 """Tests for tracing system."""
 
-import pytest
 
 from nuclear_add.tracing import (
-    NumericTracer,
     ErrorEvent,
-    ErrorType,
     ErrorSeverity,
-    PrecisionAnalyzer,
+    ErrorType,
+    NumericTracer,
     OverflowDetector,
+    PrecisionAnalyzer,
     get_global_tracer,
     set_global_tracer,
 )
@@ -68,7 +67,7 @@ class TestNumericTracer:
         tracer = NumericTracer()
         tracer.log_error(ErrorType.OVERFLOW, ErrorSeverity.ERROR, "add", (1, 2), 3)
         tracer.log_error(ErrorType.PRECISION_LOSS, ErrorSeverity.WARNING, "add", (0.1, 0.2), 0.3)
-        
+
         overflow_events = tracer.get_by_type(ErrorType.OVERFLOW)
         assert len(overflow_events) == 1
         assert overflow_events[0].error_type == ErrorType.OVERFLOW
@@ -78,7 +77,7 @@ class TestNumericTracer:
         tracer = NumericTracer()
         tracer.log_error(ErrorType.OVERFLOW, ErrorSeverity.ERROR, "add", (1, 2), 3)
         tracer.log_error(ErrorType.PRECISION_LOSS, ErrorSeverity.WARNING, "add", (0.1, 0.2), 0.3)
-        
+
         summary = tracer.get_summary()
         assert summary["total_events"] == 2
         assert "by_type" in summary
@@ -88,7 +87,7 @@ class TestNumericTracer:
         """Test exporting to JSON."""
         tracer = NumericTracer()
         tracer.log_error(ErrorType.OVERFLOW, ErrorSeverity.ERROR, "add", (1, 2), 3)
-        
+
         json_str = tracer.to_json()
         assert isinstance(json_str, str)
         assert "OVERFLOW" in json_str
@@ -136,7 +135,7 @@ class TestOverflowDetector:
         # Should overflow
         will_overflow = OverflowDetector.will_overflow_add(1e308, 1e308)
         assert will_overflow is True
-        
+
         # Should not overflow
         will_not_overflow = OverflowDetector.will_overflow_add(1.0, 2.0)
         assert will_not_overflow is False

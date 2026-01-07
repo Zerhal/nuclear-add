@@ -1,10 +1,11 @@
 """Tests for core functionality."""
 
-import pytest
 from decimal import Decimal
 from fractions import Fraction
 
-from nuclear_add import add, sum_safe, gradient
+import pytest
+
+from nuclear_add import add, gradient, sum_safe
 from nuclear_add.core import NuclearConfig, NuclearEngine
 
 
@@ -111,7 +112,7 @@ class TestGradient:
 
     def test_simple_gradient(self):
         """Test simple gradient computation."""
-        def f(x):
+        def f(x: float) -> float:
             return x * x * x  # f(x) = x³
 
         grad = gradient(f, 2.0)  # f'(2) = 3×2² = 12

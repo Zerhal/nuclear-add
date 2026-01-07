@@ -3,10 +3,9 @@
 import pytest
 
 from nuclear_add.backends import (
+    PythonBackend,
     get_backend,
     list_available_backends,
-    PythonBackend,
-    Backend,
 )
 
 
@@ -96,7 +95,7 @@ class TestBackendCapabilities:
         """Test Python backend capabilities."""
         backend = PythonBackend()
         caps = backend.capabilities
-        
+
         assert caps.deterministic is True
         assert caps.vectorized is False
         assert caps.gpu is False

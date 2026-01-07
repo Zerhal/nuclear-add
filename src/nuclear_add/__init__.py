@@ -1,5 +1,4 @@
-"""
-Nuclear Add - The Most Overkill Addition Ever Made
+"""Nuclear Add - The Most Overkill Addition Ever Made.
 
 A paranoid numerical addition engine with:
 - Kahan summation for precision
@@ -13,33 +12,33 @@ For 99.9% of cases: just use +
 For the remaining 0.1%: now you know this exists.
 """
 
-from .core import (
-    add,
-    NuclearEngine,
-    NuclearConfig,
-    sum_safe,
-    add_with_error,
-    gradient,
-    get_engine,
-    set_engine,
-)
-from .types import (
-    Interval,
-    TracedValue,
-    LazyExpr,
-    DualNumber,
-    StochasticValue,
-)
 from .backends import (
-    get_backend,
     Backend,
+    get_backend,
     list_available_backends,
 )
+from .core import (
+    NuclearConfig,
+    NuclearEngine,
+    add,
+    add_with_error,
+    get_engine,
+    gradient,
+    set_engine,
+    sum_safe,
+)
 from .tracing import (
-    NumericTracer,
     ErrorEvent,
-    ErrorType,
     ErrorSeverity,
+    ErrorType,
+    NumericTracer,
+)
+from .types import (
+    DualNumber,
+    Interval,
+    LazyExpr,
+    StochasticValue,
+    TracedValue,
 )
 
 __version__ = "1.0.0"

@@ -1,14 +1,14 @@
 """Tests for advanced types."""
 
+
 import pytest
-import math
 
 from nuclear_add.types import (
-    Interval,
     DualNumber,
-    TracedValue,
+    Interval,
     LazyExpr,
     StochasticValue,
+    TracedValue,
 )
 
 
