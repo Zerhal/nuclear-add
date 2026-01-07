@@ -95,8 +95,8 @@ jobs:
 
     - name: Check package
       run: |
-        uv pip install $(ls dist/*.whl | head -1)
-        uv run --no-project python -c "import nuclear_add; print(nuclear_add.__version__)"
+        uv pip install --system dist/*.whl
+        python -c "import nuclear_add; print(nuclear_add.__version__)"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
