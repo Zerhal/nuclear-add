@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nuclear-add"
-version = "1.0.0"
+version = "1.0.1"
 description = "The most paranoid addition ever created"
 readme = "README.md"
 license = {text = "MIT"}

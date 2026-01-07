@@ -135,4 +135,4 @@ jobs:
       run: |
         uv publish dist/*
       env:
-        UV_PUBLISH_NO_ATTESTATIONS: 1
+        UV_PUBLISH_NO_ATTESTATIONS: true
